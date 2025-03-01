@@ -13,7 +13,7 @@
   * [3.1 AirCa-W](#31-airca-w)
   * [3.2 AirCa-N](#32-airca-n)
   * [3.3 Constraints description](#33-constraints-description)
-- [4. Leaderboard](#4-leaderboard)
+- [4. Tutorials](#4-tutorials)
   * [4.1 Long-term Cargo Capacity Prediction](https://github.com/LINC-BIT/AirCa/blob/main/Long-term%20prediction.md)
   * [4.2 Optimization of Cargo Loading](https://github.com/LINC-BIT/AirCa/blob/main/Air%20cargo%20loading.md)
   * [4.3 Cargo balancing/loading with Large Language Model optimization](https://github.com/LINC-BIT/AirCa/blob/main/llm_optimization.md)
@@ -129,8 +129,8 @@ Below is the detailed field of each sub-dataset.
 | Continuous loading constraint         | Some types of ULDs need to be loaded according to the load sequence                          | String                |
 | Load order constraint                 | Goods must be loaded in the specified order                                                   | String                |
 
-# 4. Leaderboard
-Blow shows the performance of different methods in AirCa.
+# 4. Tutorials
+Blow shows the 3 tutorials and the performance of different methods in AirCa.
 ## 4.1 Long-term Cargo Capacity Prediction
 <!-- Experimental results of Long-term Cargo Capacity Prediction. We use bold and underlined fonts to denote the best and runner-up model, respectively. -->
 
