@@ -17,7 +17,7 @@ Paper Link:
   * [4.1 Long-term Cargo Capacity Prediction](##41-long-term-cargo-capacity-prediction)
   * [4.2 Optimization of Cargo Loading](##42-optimization-of-cargo-loading)
   * [4.3 Cargo balancing/loading with Large Language Model optimization](##43-cargo-balancingloading-with-large-language-model-optimization)
-- [5. The AirCa package](#5-the-airca-package)
+- [5. The AirCa APIs](#5-the-airca-apis)
 - [6. References](#5-references)
 - [7. Citations](#6-citation)
 
