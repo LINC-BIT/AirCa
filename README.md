@@ -198,7 +198,7 @@ Experimental results of Optimization of Cargo Loading. The introduction of 12 ba
 | **PSO-normal**  | 23.39 ± 0.28      | 3.79 ± 2.30        | 5.80 ± 4.09       | 23.39 ± 0.29      | 3.78 ± 2.37        | 1.19 ± 0.74       |
 | **RCH**         | 23.39 ± 0.26      | 3.40 ± 1.91        | 3.66 ± 0.03       | 23.42 ± 0.24      | 3.61 ± 1.76        | 0.72 ± 0.01       |
 
-# 5. The AirCa package
+# 5. The AirCa APIs
 In addition to our AirCa dataset, we release the AirCa package,
 including three types of APIs. It is designed to faciliate researchers
 in developing aircraft cargo loading applications.The details are
