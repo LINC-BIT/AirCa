@@ -14,9 +14,9 @@
   * [3.2 AirCa-N](#32-airca-n)
   * [3.3 Constraints description](#33-constraints-description)
 - [4. Leaderboard](#4-leaderboard)
-  * [4.1 Long-term Cargo Capacity Prediction](#41-long-term-cargo-capacity-prediction)
-  * [4.2 Optimization of Cargo Loading](#42-optimization-of-cargo-loading)
-  * [4.3 Cargo balancing/loading with Large Language Model optimization](#43-cargo-balancingloading-with-large-language-model-optimization)
+  * [4.1 Long-term Cargo Capacity Prediction](https://github.com/LINC-BIT/AirCa/blob/main/Long-term%20prediction.md)
+  * [4.2 Optimization of Cargo Loading](https://github.com/LINC-BIT/AirCa/blob/main/Air%20cargo%20loading.md)
+  * [4.3 Cargo balancing/loading with Large Language Model optimization](https://github.com/LINC-BIT/AirCa/blob/main/llm_optimization.md)
 - [5. The AirCa APIs](#5-the-airca-apis)
 - [6. References](#5-references)
 - [7. Citations](#6-citation)
@@ -132,7 +132,6 @@ Below is the detailed field of each sub-dataset.
 # 4. Leaderboard
 Blow shows the performance of different methods in AirCa.
 ## 4.1 Long-term Cargo Capacity Prediction
-
 <!-- Experimental results of Long-term Cargo Capacity Prediction. We use bold and underlined fonts to denote the best and runner-up model, respectively. -->
 
 ![image/png](https://cdn-uploads.huggingface.co/production/uploads/65d6eb2651e148d01873ec81/wcNpHRQ-eVLtufvsH8Gpz.png)
