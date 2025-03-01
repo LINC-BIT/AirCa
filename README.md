@@ -1,13 +1,7 @@
-# AirCa
-
- **AirCa** is a publicly available  aircraft cargo loading dataset with  millions of instances from industry. It has three unique characteristics: 
-(1) Large-scale, AirCa contains in total 6,071k records and 1,092k flights, covering 6 aircraft types and 425 airports over a total span of 9 months. 
-(2) Comprehensive information, AirCa is delivered to provide rich information pertaining to aircraft cargo loading, including detailed cargo characteristic information, loading-event logs, flight destination, and comprehensive loading constraints in practical scenarios.
-(3) Diversity,  AirCa aims to increase data diversity from three perspectives: destination diversity, Flight diversity, and Constraint diversity.
 
 # Contents
 
-- [1. About Dataset](#1-about-dataset)
+- [1. AirCa](#1-airca)
 - [2. Download](#2-download)
 - [3. Description](#3-description)
   * [3.1 AirCa-W](#31-airca-w)
@@ -28,7 +22,12 @@ Code Link: https://github.com/LINC-BIT/AirCa
 Paper Link:  
 
 
-# 1. About Dataset
+# 1. AirCa
+
+ **AirCa** is a publicly available  aircraft cargo loading dataset with  millions of instances from industry. It has three unique characteristics: 
+(1) Large-scale, AirCa contains in total 6,071k records and 1,092k flights, covering 6 aircraft types and 425 airports over a total span of 9 months. 
+(2) Comprehensive information, AirCa is delivered to provide rich information pertaining to aircraft cargo loading, including detailed cargo characteristic information, loading-event logs, flight destination, and comprehensive loading constraints in practical scenarios.
+(3) Diversity,  AirCa aims to increase data diversity from three perspectives: destination diversity, Flight diversity, and Constraint diversity.
 ![image/jpeg](https://cdn-uploads.huggingface.co/production/uploads/65d6eb2651e148d01873ec81/8lPaRQm5J7z6tkRqMJrfc.jpeg)
 
 The figure depicts the process of air cargo loading, starting with terminal administration, where goods are processed and prepared for transportation.
