@@ -13,7 +13,7 @@
   * [4.3 Cargo balancing/loading with Large Language Model optimization](https://github.com/LINC-BIT/AirCa/blob/main/llm_optimization.md)
 - [5. The AirCa APIs](#5-the-airca-apis)
 - [6. References](#5-references)
-- [7. Citations](#6-citation)
+
 
 
 Dataset Download: https://huggingface.co/datasets/LINC-BIT/AirCa       
@@ -272,7 +272,7 @@ optimizer , epochs =600)
 [11] Dahmani, N., & Krichen, S. (2013). On solving the bi-objective aircraft cargo loading problem. In *ICMSAO’13* (pp. 1–6). IEEE.  
 [12] Gajda, M., Trivella, A., Mansini, R., & Pisinger, D. (2022). An optimization approach for a complex real-life container loading problem. *Omega, 107*, 102559.  
 
-# 7. Citation
+
 <!-- If you find this helpful, please cite our paper:
 
 ```shell
