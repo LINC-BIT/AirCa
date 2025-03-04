@@ -14,24 +14,26 @@ pip install glob2
 ```
 
 ## Example 1: LSTM model
-
+Long Short-Term Memory (LSTM) is a specialized variant of recurrent neural networks designed to capture long-term temporal dependencies in sequential data. It introduces gating mechanisms—namely the input, forget, and output gates—to regulate the flow of information, thereby mitigating the vanishing and exploding gradient problems that commonly arise in standard RNNs.
 Run the following command in Python:
+
 ```bash
-python LSTM_model.py
+python LSTM.py --lr 0.0001 --num_layers 3 --batch_size 16 --epochs 600
 ```
 
 ## Example 2: CNN model
-
+Convolutional Neural Network (CNN) constitutes a pivotal deep learning architecture extensively employed in computer vision tasks, including image classification, object detection, and semantic segmentation. By leveraging learnable convolutional filters and pooling mechanisms, CNNs hierarchically extract and refine spatial features from raw input data, thereby capturing both local patterns and global context. Among the notable CNN variants, Residual Networks (ResNets) incorporate skip connections to address vanishing gradients, enabling the training of deeper models and further advancing the representational capacity of CNN architectures.
 Run the following command in Python:
+
 ```bash
-python CNN_model.py
+python CNN.py --lr 0.0005 --num_layers 3 --batch_size 16 --epochs 800
 ```
 
 ## Example 3: Regression model
-
+Multiple linear regression (MLR) is a fundamental statistical modeling technique used to examine the relationship between a continuous dependent variable and multiple explanatory (independent) variables.
 Run the following command in Python:
 ```bash
-python Regression_model.py
+python regression.py --lr 0.0005 --num_layers 3 --batch_size 16 --epochs 300
 ```
 
 
