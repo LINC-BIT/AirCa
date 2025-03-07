@@ -21,6 +21,7 @@ Run the following command in Python:
 ```bash
 python HGA_llm.py
 ```
+![image](https://github.com/user-attachments/assets/1f913398-de23-416d-b066-ce6e5ead40f2)
 
 ## Example 2: PSO optimization
 
@@ -28,4 +29,5 @@ Run the following command in Python:
 ```bash
 python DMOPSO_llm.py
 ```
+![image](https://github.com/user-attachments/assets/ac50cc1a-7c41-471d-abab-610057674741)
 
