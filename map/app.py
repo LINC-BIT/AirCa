@@ -96,7 +96,7 @@ def index():
         custom_icon = folium.DivIcon(
             icon_size=(80,80),
             icon_anchor=(40, 80),
-            html=f'<div style="text-align: center; width: 80px; height: 80px;"><i class="fa fa-map-marker" style="font-size:15px;color:grey;"></i><br><b><span style="font-size:12pt;color:blue;">{city["name"]}</span></b><br><b><span style="font-size:10pt;color:black;">Avg: {city["avg"]}</span></b></div>'
+            html=f'<div style="text-align: center; width: 80px; height: 80px;"><i class="fa fa-map-marker" style="font-size:15px;color:grey;"></i><br><b><span style="font-size:8pt;color:blue;">{city["name"]}</span></b><br><b><span style="font-size:8pt;color:black;">Avg: {city["avg"]}</span></b></div>'
         )
         popup_content = f'<b>{city["name"]}</b><br>'
         folium.Marker(
