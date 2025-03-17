@@ -1,0 +1,3 @@
+[build]
+root = "backend"
+builder = "NIXPACKS"
