@@ -2,7 +2,7 @@
 root = "map"
 builder = "NIXPACKS"
 
-[build.args]
-NIXPACKS_PYTHON_SERVER = "gunicorn"
-NIXPACKS_PYTHON_GUNICORN_ARGS = "-w 1 -b 0.0.0.0:$PORT"
-NIXPACKS_PYTHON_WEBAPP = "map.app:app"
+# [build.args]
+# NIXPACKS_PYTHON_SERVER = "gunicorn"
+# NIXPACKS_PYTHON_GUNICORN_ARGS = "-w 1 -b 0.0.0.0:$PORT"
+# NIXPACKS_PYTHON_WEBAPP = "map.app:app"
