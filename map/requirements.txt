@@ -2,4 +2,3 @@ flask
 folium
 matplotlib
 gunicorn
-base64
