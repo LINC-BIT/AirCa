@@ -145,4 +145,4 @@ def get_chart():
     return jsonify({'image_base64': image_base64})
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5000)
