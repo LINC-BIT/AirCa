@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>THE MAIN PAGE</title>
+    <style>
+        /* 打开侧面弹出框的按钮 */
+        .open-popup-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        /* 侧面弹出框样式 */
+        .side-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100vh;
+            background-color: #f4f4f4;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        /* 定义 .show 类，让弹出框显示 */
+        .side-popup.show {
+            display: block;
+        }
+
+        /* 弹出框头部样式 */
+        .popup-header {
+            padding: 15px;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 关闭按钮样式 */
+        .close-popup-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* 弹出框内容样式 */
+        .popup-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .popup-button {
+            width: 100%;
+            padding: 10px;
+        }
+
+        /* 第二层弹出框样式 */
+        .center-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .center-popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .chart-container {
+            width: 600px;
+            height: 400px;
+            margin-top: 20px; /* 调整顶部外边距 */
+            margin-bottom: 20px; /* 调整底部外边距 */
+            margin-left: auto; /* 水平居中 */
+            margin-right: auto; /* 水平居中 */
+            z-index: 1001;
+            position: relative;
+        }
+
+        /* 地图容器样式 */
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 打开弹出框的按钮 -->
+    <button class="open-popup-btn" onclick="openPopup()">Details</button>
+
+    <!-- 侧面弹出框 -->
+    <div class="side-popup" id="sidePopup">
+        <div class="popup-header">
+            <h2>Airport cargo data</h2>
+            <!-- 上一句由中文改为英文-->
+            <button class="close-popup-btn" onclick="closePopup()">×</button>
+        </div>
+        <div class="popup-content" id="popupContent"></div>
+    </div>
+
+    <!-- 中央弹出框 -->
+    <div class="center-popup" id="centerPopup" onclick="closeCenterPopupOnClickOutside(event)">
+        <div class="center-popup-content" id="centerPopupContent">
+            <!-- 预留画布容器 -->
+            <div id="chart-canvas" class="chart-container"></div>
+            <button onclick="closeCenterPopup()">close</button>
+            <!-- 添加返回按钮 -->
+            <button onclick="closeCenterPopup()">back</button>
+        </div>
+    </div>
+
+    <!-- 地图容器 -->
+    <div id="map">
+        {{ map | safe }}
+    </div>
+
+    <script>
+        const cities = ['SHA', 'PEK', 'CAN', 'SYX', 'MUC', 'SZX', 'FRA', 'CDG', 'HKG', 'GRU', 'CKG', 'CTU', 'URC', 'SIN', 'HAK', 'LHR', 'WUH', 'IAD', 'SVO', 'FCO', 'LAX', 'SFO', 'YVR', 'BKK', 'MAD', 'HGH', 'DAT', 'CHG', 'DPS', 'SYD'];
+
+        // 打开侧面弹出框的函数
+        function openPopup() {
+            const popup = document.getElementById('sidePopup');
+            popup.classList.add('show');
+            renderButtons();
+        }
+
+        // 关闭侧面弹出框的函数
+        function closePopup() {
+            const popup = document.getElementById('sidePopup');
+            popup.classList.remove('show');
+        }
+
+        // 动态渲染按钮的函数
+        function renderButtons() {
+            const contentDiv = document.getElementById('popupContent');
+            contentDiv.innerHTML = ''; // 清空之前的内容
+
+            // 遍历城市数组，为每个城市创建一个按钮
+            cities.forEach((city, index) => {
+                const button = document.createElement('button');
+                button.textContent = city;
+                button.classList.add('popup-button');
+                button.addEventListener('click', () => {
+                    openCenterPopup(city);
+                });
+                contentDiv.appendChild(button);
+            });
+        }
+
+        // 打开中央弹出框的函数
+        function openCenterPopup(city) {
+            const centerPopup = document.getElementById('centerPopup');
+            const centerPopupContent = document.getElementById('centerPopupContent');
+            centerPopupContent.innerHTML = '';
+
+            // 创建两个新按钮
+            const newButton1 = document.createElement('button');
+            newButton1.textContent = `Wide-body aircraft - ${city}`;
+            newButton1.classList.add('popup-button');
+            newButton1.addEventListener('click', () => {
+                getChart(city, 'widebody');
+            });
+
+            const newButton2 = document.createElement('button');
+            newButton2.textContent = `Narrow-body aircraft - ${city}`;
+            newButton2.classList.add('popup-button');
+            newButton2.addEventListener('click', () => {
+                getChart(city, 'narrowbody');
+            });
+
+            // 重新添加画布容器
+            const chartCanvas = document.createElement('div');
+            chartCanvas.id = 'chart-canvas';
+            chartCanvas.classList.add('chart-container');
+
+            // 添加返回按钮
+            const backButton = document.createElement('button');
+            backButton.textContent = 'back';
+            backButton.addEventListener('click', closeCenterPopup);
+
+            centerPopupContent.appendChild(newButton1);
+            centerPopupContent.appendChild(newButton2);
+            centerPopupContent.appendChild(chartCanvas);
+            centerPopupContent.appendChild(backButton);
+            centerPopup.style.display = 'flex';
+        }
+
+        // 关闭中央弹出框的函数
+        function closeCenterPopup() {
+            const centerPopup = document.getElementById('centerPopup');
+            centerPopup.style.display = 'none';
+        }
+
+        // 获取图表的函数
+        function getChart(city, aircraftType) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/get_chart', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            const chartCanvas = document.getElementById('chart-canvas');
+                            chartCanvas.innerHTML = `<img src="data:image/png;base64,${response.image_base64}" alt="Chart" class="chart-container">`;
+                        } catch (error) {
+                            console.error('JSON Parse Error:', error);
+                        }
+                    } else {
+                        console.error('Request Failed, Status Code:', xhr.status);
+                    }
+                }
+            };
+            const data = `city=${city}&aircraft_type=${aircraftType}`;
+            xhr.send(data);
+        }
+
+        // 修改地图标记的点击事件
+        document.addEventListener('DOMContentLoaded', function () {
+            const markers = document.querySelectorAll('.leaflet-marker-icon');
+            markers.forEach(marker => {
+                const popup = marker.nextElementSibling;
+                if (popup && popup.classList.contains('leaflet-popup')) {
+                    const cityName = popup.querySelector('b').textContent;
+                    popup.addEventListener('click', function () {
+                        openCenterPopup(cityName);
+                    });
+                }
+            });
+        });
+
+        // 点击中央弹出框外部关闭弹出框的函数
+        function closeCenterPopupOnClickOutside(event) {
+            const centerPopup = document.getElementById('centerPopup');
+            const centerPopupContent = document.getElementById('centerPopupContent');
+            if (event.target === centerPopup && event.target!== centerPopupContent) {
+                closeCenterPopup();
+            }
+        }
+    </script>
+</body>
+
+</html>
