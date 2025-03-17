@@ -260,7 +260,7 @@ optimizer , epochs =600)
 ```
 # 6. AirCa demo
 
-We have developed a demo showcasing AirCa data on a world map. Here is the link:
+We have developed a demo showcasing AirCa data on a world map. Here is the link: https://airca-production.up.railway.app/
 
 # 7. References
 [1] Zhao, X., Dong, Y., & Zuo, L. (2023). A combinatorial optimization approach for air cargo palletization and aircraft loading. *Mathematics, 11*(13), 2798.  
