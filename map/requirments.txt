@@ -1,0 +1,4 @@
+Flask
+folium
+matplotlib
+gunicorn
