@@ -1,3 +1,10 @@
 [build]
-root = "map"
 builder = "NIXPACKS"
+
+[build.args]
+# 告诉 Nixpacks 这是 Python Web App，而非纯静态
+NIXPACKS_PYTHON_SERVER = "gunicorn"
+# Gunicorn 的启动参数（1 个 worker，监听 0.0.0.0:$PORT）
+NIXPACKS_PYTHON_GUNICORN_ARGS = "-w 1 -b 0.0.0.0:$PORT"
+# 指定 Flask 的入口：如果你是 app.py 里有 app=Flask(__name__), 就用 "app:app"
+NIXPACKS_PYTHON_WEBAPP = "app:app"
