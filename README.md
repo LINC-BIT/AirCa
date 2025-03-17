@@ -12,7 +12,8 @@
   * [4.2 Optimization of Cargo Loading](https://github.com/LINC-BIT/AirCa/blob/main/Air%20cargo%20loading.md)
   * [4.3 Cargo balancing/loading with Large Language Model optimization](https://github.com/LINC-BIT/AirCa/blob/main/llm_optimization.md)
 - [5. The AirCa APIs](#5-the-airca-apis)
-- [6. References](#5-references)
+- [6. AirCa demo](#6-airca-demo)
+- [7. References](#7-references)
 
 
 
@@ -257,8 +258,11 @@ batch_size = batch_size , shuffle = True )
 train_model ( dataloader1 , baseline_name , criterion ,
 optimizer , epochs =600)
 ```
+# 6. AirCa demo
 
-# 6. References
+We have developed a demo showcasing AirCa data on a world map. Here is the link:
+
+# 7. References
 [1] Zhao, X., Dong, Y., & Zuo, L. (2023). A combinatorial optimization approach for air cargo palletization and aircraft loading. *Mathematics, 11*(13), 2798.  
 [2] Mesquita, A. C. P., & Sanches, C. A. A. (2024). Air cargo load and route planning in pickup and delivery operations. *Expert Systems with Applications, 249*, 123711.  
 [3] Yan, S., Lo, C.-T., & Shih, Y.-L. (2006). Cargo container loading plan model and solution method for international air express carriers. *Transportation Planning and Technology, 29*(6), 445–470.  
