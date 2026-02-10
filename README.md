@@ -272,14 +272,6 @@ This experiment evaluates multi-stage cargo loading under two objective modes: *
 python "multi-stage trade-off script" --code-root "code root" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-flights 10 --time-limit 15
 ```
 
-## 4.4 Running example
-```
-python "<code root path>/AirCa/code/multi_constraint_cargo_loading/Aircraft_configuration_comparison..py" --code-root "code root" --cargo-data-dir "cargo path" --aircraft-data-dir "aircraft path" --output-dir "output path" --aircraft B777 --mode demo --flight-number "flight number" --algos all --time-limit 120
-
-```
-
-![alt text](image-2.png)
-
 
 ### Experiment 6: Single-stage versus multi-stage comparison (A320 & B777)
 
@@ -300,6 +292,14 @@ This experiment evaluates **150 multi-segment flights** using both **single-stag
 ```bash
 python "single-vs-multi-stage comparison script" --code-root "code root" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-pairs 150 --time-limit 15
 ```
+
+## 4.4 Running example
+```
+python "<code root path>/AirCa/code/multi_constraint_cargo_loading/Aircraft_configuration_comparison..py" --code-root "code root" --cargo-data-dir "cargo path" --aircraft-data-dir "aircraft path" --output-dir "output path" --aircraft B777 --mode demo --flight-number "flight number" --algos all --time-limit 120
+
+```
+
+![alt text](image-2.png)
 
 
 # 5. The AirCa APIs
