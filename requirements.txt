@@ -1,0 +1,5 @@
+numpy>=1.23
+pandas>=1.5
+scipy>=1.9
+psutil>=5.9
+openpyxl>=3.1
