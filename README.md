@@ -4,7 +4,7 @@
 - [1. AirCa](#1-airca)
 - [2. Download](#2-download)
 - [3. Description](#3-description)
-  * [3.1 AirCa](#31-airca)
+  * [3.1 AirCa data field](#31-airca-data-field)
   * [3.2 Constraints description](#32-constraints-description)
 - [4. Tutorials of workloads](#4-tutorials-of-workloads)
   * [4.1 Multi-constraint cargo loading](#41-multi-constraint-cargo-loading)
@@ -61,7 +61,7 @@ import pandas as pd
 
 # 3. Description
 Below is the detailed field of each sub-dataset.
-## 3.1 AirCa
+## 3.1 AirCa data field
 | Data field | Description | Unit/format |
 |---|---|---|
 | **Cargo information** |  |  |
