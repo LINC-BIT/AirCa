@@ -204,7 +204,7 @@ python "aircraft configuration comparison script" --code-root "code root" --carg
 This experiment studies scalability by detaching bulk cargo into progressively finer granularities (100/50/25/10 kg), which increases the number of decision variables from tens to thousands per flight. For each scale, it records computation time (and CG gap) of multiple combinatorial optimization algorithms to reveal their scaling behavior. :contentReference[oaicite:0]{index=0}
 
 #### What you need to prepare
-- **code root**: a directory that contains the `algorithm/` folder (the script imports `algorithm.for_narrow.*`). :contentReference[oaicite:1]{index=1}  
+- **code root**: a directory that contains the `algorithm/` folder (the script imports `algorithm.for_narrow.*`).
 - **aircraft path**: aircraft configuration files (default: `G:\AirCa\code\aircraft_data`) and it must include `A320.csv` (the 2nd column is used as `hold_id`) plus optional CG limit files `stdZfw_a.csv/stdZfw_f.csv`. :contentReference[oaicite:2]{index=2}  
 - **cargo path**: directory containing `BAKFLGITH_LOADDATA*.csv`. :contentReference[oaicite:3]{index=3}  
 - **output path**: where result CSV files will be saved. :contentReference[oaicite:4]{index=4}  
