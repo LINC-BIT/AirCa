@@ -60,7 +60,7 @@ import pandas as pd
 ```
 
 # 3. Description
-Below is the detailed field of each sub-dataset.
+Below is the detailed field of data and constraints.
 ## 3.1 AirCa data field
 | Data field | Description | Unit/format |
 |---|---|---|
