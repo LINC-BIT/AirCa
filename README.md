@@ -1,15 +1,7 @@
 
-<img width="1415" height="552" alt="23a265bbc0028a0df9717dcf425b7c32"
-     src="https://github.com/user-attachments/assets/4a811c8b-70a8-4f39-b35e-2f726f52b1be"
-     usemap="#img-map" />
-
-<map name="img-map">
-  <area shape="rect" coords="0,0,707,552"
-        href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart" target="_blank" />
-  <area shape="rect" coords="708,0,1415,552"
-        href="https://github.com/LINC-BIT/AirCa/archive/refs/heads/main.zip" target="_blank" />
-</map>
-
+<a href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart">
+  <img width="1415" height="552" alt="23a265bbc0028a0df9717dcf425b7c32" src="https://github.com/user-attachments/assets/b3a5ee6d-6921-48a2-8ac3-6bb9f01c4083" />
+</a>
 
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
