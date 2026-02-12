@@ -49,7 +49,7 @@ Click here to access AirCa demo: https://linc-bit.github.io/AirCa/html-page/inde
 
 
 Dataset Download: https://huggingface.co/datasets/LINC-BIT/AirCa       
-Dataset Website: https://legendary-dusk-e9e0a6.netlify.app/   
+Dataset Website: https://linc-bit.github.io/AirCa/html-page/index.html 
 Code Link: https://github.com/LINC-BIT/AirCa     
 Paper Link:  
 
