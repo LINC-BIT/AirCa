@@ -20,10 +20,12 @@ Users can select from 5 preset loading inistances, choose an optimization algori
 
 
 <div align="center">
-![案例算法](https://github.com/user-attachments/assets/c73879a3-83ff-4dd4-9153-ee5e5f972ac0)
+ 
+![demo-product](https://github.com/user-attachments/assets/d50a37e0-2f20-4373-a57a-a90e603dfc26)
+
 </div>
 
-Click here to enter demo: https://linc-bit.github.io/AirCa/html-page/index.html#examples
+Click here to access AirCa demo: https://linc-bit.github.io/AirCa/html-page/index.html#examples
 
 
 
