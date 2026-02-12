@@ -16,7 +16,7 @@
 
 
 # AirCa Demo
-Users can select from 5 preset loading inistances, choose an optimization algorithm, and generate a loading plan with one click. Results are visualized directly on a 3D aircraft hold layout.
+ThrUsers can select from 5 preset loading inistances, choose an optimization algorithm, and generate a loading plan with one click. Results are visualized directly on a 3D aircraft hold layout (Gif below).
 
 
 <div align="center">
