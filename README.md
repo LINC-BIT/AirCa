@@ -2,8 +2,7 @@
 <img width="1415" height="552" alt="23a265bbc0028a0df9717dcf425b7c32" src="https://github.com/user-attachments/assets/4a811c8b-70a8-4f39-b35e-2f726f52b1be" />
 <div align="center">
 
-**AirCa website**  
-https://linc-bit.github.io/AirCa/html-page/index.html
+**AirCa website**  https://linc-bit.github.io/AirCa/html-page/index.html
 
 </div>
 
@@ -22,7 +21,7 @@ https://linc-bit.github.io/AirCa/html-page/index.html
 
 
 
-# Contents
+# Tutorial index
 
 - [1. AirCa](#1-airca)
 - [2. Download](#2-download)
