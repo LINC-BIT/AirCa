@@ -17,7 +17,7 @@
 
 
 Dataset Download: https://huggingface.co/datasets/LINC-BIT/AirCa       
-Dataset Website:   
+Dataset Website: https://legendary-dusk-e9e0a6.netlify.app/
 Code Link: https://github.com/LINC-BIT/AirCa     
 Paper Link:  
 
@@ -114,10 +114,12 @@ with massive variables, and multi-segment cargo loading.
 | Cargo loading with massive variables | Cargo detaching at finer granularities dramatically increases decision variables and expands the search space exponentially. | Massive variables slow heuristic optimization because far more candidate solutions must be explored as the search space grows. |
 | Multi-segment cargo loading | Multi-stage sequential decisions with dual objectives (minimizing CG offset while maximizing profit) increase problem complexity. | Conflicting objectives require re-balancing across stages, which can increase computation time to achieve feasible and high-quality solutions. |
 
-Before running the workloads, please install the required Python libraries:
+Before running the workloads, please install the required Python libraries and preprocess the data from the huggingface:
 
 ```bash
 pip install -r requirements.txt
+
+python data_preprocess.py --input-path /data/raw/ --output-path /data/processed/
 ```
 
 
