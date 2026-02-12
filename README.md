@@ -1,7 +1,9 @@
 
-<a href="https://linc-bit.github.io/AirCa/html-page/index.html">
-<img width="1415" height="552" alt="23a265bbc0028a0df9717dcf425b7c32" src="https://github.com/user-attachments/assets/4a811c8b-70a8-4f39-b35e-2f726f52b1be" />
-</a>
+<div style="position:relative; display:inline-block;">
+  <img width="1415" height="552" alt="23a265bbc0028a0df9717dcf425b7c32" src="https://github.com/user-attachments/assets/4a811c8b-70a8-4f39-b35e-2f726f52b1be" />
+  <a href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart" style="position:absolute; left:0; top:0; width:50%; height:100%;"></a>
+  <a href="" style="position:absolute; left:50%; top:0; width:50%; height:100%;"></a>
+</div>
 <div align="center">
 
 **AirCa website**  https://linc-bit.github.io/AirCa/html-page/index.html
