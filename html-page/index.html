@@ -1,1 +1,3105 @@
-<h1>AirCa Project Page</h1>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>AirCa: Benchmark Dataset and Toolkit for Air Cargo Loading
+    Combinatorial Optimization</title>
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+  <!-- 图标库 -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+  >
+  <!-- Chart.js (用于数据可视化) -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"
+  ></script>
+  <!-- 可选：Font Awesome 图标 -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  >
+  <style>
+    /* 自定义样式 */
+    .section-padding {
+      padding: 6rem 0;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8rem 0;
+    }
+
+    .feature-card {
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .footer-section {
+      background-color: #212529;
+      color: #adb5bd;
+      padding: 3rem 0 1rem;
+    }
+
+    /* 货位方框容器：绝对定位覆盖在图片上 */
+    #cargoBoxContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 所有货位方框的基础样式（统一布局） */
+    .cargo-box {
+      position: absolute;
+      border-width: 1px;
+      border-style: solid;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+      /* 新增：文字居中布局 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 文字样式：清晰、易读 */
+    .cargo-text {
+      color: white;
+      /* 白色文字在半透明彩色背景上最清晰 */
+      font-weight: bold;
+      /* 加粗增强辨识度 */
+      text-shadow:
+        1px 1px 1px rgba(0, 0, 0, 0.8),
+        /* 黑色外阴影，增强边缘对比度 */
+        -1px -1px 1px rgba(0, 0, 0, 0.8);
+      /* 反向阴影，让文字更立体 */
+    }
+
+    /* 红色方框（类型1）：珊瑚红，柔和不刺眼 */
+    .cargo-box-red {
+      background-color: rgba(239, 68, 68, 0.7);
+      border-color: rgba(239, 68, 68, 0.8);
+    }
+
+    /* 蓝色方框（类型2）：天蓝色，和红色对比明显 */
+    .cargo-box-blue {
+      background-color: rgba(59, 130, 246, 0.7);
+      border-color: rgba(59, 130, 246, 0.8);
+    }
+
+    /* 绿色方框（类型3）：青柠绿，辨识度高且不突兀 */
+    .cargo-box-green {
+      background-color: rgba(34, 197, 94, 0.7);
+      border-color: rgba(34, 197, 94, 0.8);
+    }
+
+    .download-btn {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+
+    .download-btn:hover {
+      background-color: #0b5ed7;
+      border-color: #0a58ca;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Nar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a
+        class="navbar-brand"
+        href="#"
+      >
+        <i class="bi bi-speedometer2 me-2"></i>AirCa
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div
+        class="collapse navbar-collapse"
+        id="navbarNav"
+      >
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a
+              class="nav-link active"
+              href="#home"
+            >Home</a></li>
+          <li class="nav-item"><a
+              class="nav-link"
+              href="#examples"
+            >Demo</a></li>
+          <li class="nav-item"><a
+              class="nav-link"
+              href="#about"
+            >About</a></li>
+          <li class="nav-item"><a
+              class="nav-link"
+              href="#features"
+            >Features</a></li>
+          <li class="nav-item"><a
+              class="nav-link"
+              href="#benchmark"
+            >Benchmarks</a></li>
+          <li class="nav-item"><a
+              class="nav-link"
+              href="#combination-optimization"
+            >Customization</a></li>
+          <li class="nav-item"><a
+              class="nav-link"
+              href="#quickstart"
+            >Quick Start</a></li>
+          <li class="nav-item"><a
+              class="nav-link"
+              href="#faq"
+            >FAQ</a></li>
+        </ul>
+        <a
+          href="https://github.com/LINC-BIT/AirCa"
+          target="_blank"
+          class="btn btn-outline-light"
+        >
+          <i class="bi bi-github me-1"></i>GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section
+    id="home"
+    class="hero-section"
+  >
+    <div class="container text-center">
+      <h1 class="display-4 fw-bold mb-4">AirCa: Benchmark Dataset and Toolkit
+        for Air Cargo Loading Combinatorial Optimization</h1>
+      <p class="lead mb-5">An industrial-grade, highly realistic, multi-faceted
+        combinatorial optimization algorithm benchmarking solution tailored for
+        air cargo loading scenarios</p>
+      <div class="d-flex gap-3 justify-content-center">
+        <a
+          href="#quickstart"
+          class="btn btn-light btn-lg"
+        >Quick Start</a>
+        <a
+          href="https://github.com/LINC-BIT/AirCa"
+          target="_blank"
+          class="btn btn-outline-light btn-lg"
+        >View Source Code</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo -->
+  <section
+    id="examples"
+    class="section-padding"
+  >
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center mb-5">
+          <h2 class="fw-bold display-5">Demo</h2>
+          <hr class="w-25 mx-auto">
+        </div>
+      </div>
+      <!-- Button Group -->
+      <div class="row justify-content-center mb-3">
+        <div class="col-lg-8">
+          <div
+            class="btn-group d-flex justify-content-center gap-2"
+            role="group"
+            aria-label="Case Filter Button Group"
+          >
+            <button
+              type="button"
+              class="btn btn-primary active"
+              id="caseBtn1"
+              data-case-number="1"
+            >Case 1</button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              id="caseBtn2"
+              data-case-number="2"
+            >Case 2</button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              id="caseBtn3"
+              data-case-number="3"
+            >Case 3</button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              id="caseBtn4"
+              data-case-number="4"
+            >Case 4</button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              id="caseBtn5"
+              data-case-number="5"
+            >Case 5</button>
+          </div>
+        </div>
+      </div>
+      <!-- Cargo to be Loaded / Cargo Holds -->
+      <div class="row g-4  mb-5">
+        <!-- Cargo Data -->
+        <div class="col-md-6 mb-5">
+          <h4 class="text-center fw-semibold mb-3">Cargo to be Loaded:</h4>
+          <div class="card feature-card h-100 pt-3 ps-3 pe-3 pb-1 shadow-sm ">
+            <div class="card-body p-0">
+              <!-- Table Container: Scrollable when overflow -->
+              <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-striped table-hover">
+                  <thead class="table-light sticky-top">
+                    <tr>
+                      <th>ID</th>
+                      <th>Uld</th>
+                      <th>Type</th>
+                      <th>Weight</th>
+                      <th>Volume</th>
+                      <th>Destination</th>
+                      <th>SpecialCode</th>
+                      <th>Priority</th>
+                    </tr>
+                  </thead>
+                  <!-- Table Body: Empty skeleton, populated dynamically by JS -->
+                  <tbody id="caseTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cargo Hold Data Module -->
+        <div class="col-md-6 mb-5">
+          <!-- New: Cargo Hold Data Title (same style as cargo data title) -->
+          <h4 class="text-center fw-semibold mb-3">Cargo Holds to be Loaded:
+          </h4>
+          <!-- Card Container: Same style/height as cargo data card -->
+          <div class="card feature-card h-100 p-0 shadow-sm">
+            <div
+              class="card-body p-0 d-flex align-items-center justify-content-center"
+            >
+              <!-- Image Display Area: Adapt to card height, scrollable when overflow (same rule as table container) -->
+              <div
+                style="max-height: 400px; overflow-y: auto; width: 100%; text-align: center;"
+              >
+                <img
+                  id="cabinImage"
+                  src="B777.png"
+                  alt="Cargo Hold Data Chart"
+                  style="max-width: 100%; max-height: 100%; object-fit: contain;"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Algorithm Selection + Generate Button -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-lg-7 d-flex align-items-center gap-3">
+          <!-- 1. Algorithm Dropdown Selector -->
+          <div class="flex-grow-1 position-relative w-100">
+            <select
+              class="form-select form-select-lg text-nowrap py-2"
+              id="algorithmSelect"
+              aria-label="Select Air Cargo Loading Algorithm"
+            >
+              <!-- Default placeholder option -->
+              <option
+                value=""
+                selected
+                disabled
+                hidden
+              >Select Air Cargo Loading Algorithm</option>
+              <!-- Algorithm Options -->
+              <option value="MILP">MILP (Mixed Integer Linear Programming)
+              </option>
+              <option value="MINLP">MINLP (Mixed Integer Nonlinear Prog)
+              </option>
+              <option value="QP">QP (Quadratic Programming)</option>
+              <option value="DP">DP (Dynamic Programming)</option>
+              <option value="CP">CP (Constraint Programming)</option>
+              <option value="GA">GA (Genetic Algorithm)</option>
+              <option value="PSO">PSO (Particle Swarm Optimization)</option>
+              <option value="CS">CS (Cuckoo Search Algorithm)</option>
+              <option value="ACO">ACO (Ant Colony Optimization)</option>
+              <option value="ABC">ABC (Artificial Bee Colony Algorithm)</option>
+              <option value="MBO">MBO (Bacterial Foraging Optimization)</option>
+            </select>
+            <div
+              id="selectFeedback"
+              class="text-danger small position-absolute mt-1 d-none"
+            >Please select a loading algorithm</div>
+          </div>
+
+          <!-- 2. Generate Loading Plan Button -->
+          <button
+            type="button"
+            class="btn btn-primary btn-lg py-2 flex-shrink-0"
+            id="generateBtn"
+          >Generate Loading Plan</button>
+        </div>
+      </div>
+
+      <!-- Loading Plan Result -->
+      <div
+        class="row justify-content-center d-none"
+        id="resultCard"
+      >
+        <div class="col-lg-8">
+          <div class="card shadow-sm">
+            <div class="card-body text-center p-0  ">
+              <!-- Result Image in Card -->
+              <img
+                id="resultImage"
+                src="B777.png"
+                alt="Loading Plan Result Chart"
+                style="max-width: 100%; max-height: 500px; object-fit: contain;"
+              >
+
+
+              <div id="cargoBoxContainer"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Core Overview -->
+  <section
+    id="about"
+    class="section-padding bg-light"
+  >
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center mb-5">
+          <h2 class="fw-bold display-5">Overview</h2>
+          <hr class="w-25 mx-auto">
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <h3 class="fw-semibold mb-3"><i
+              class="bi bi-question-circle text-primary me-2"
+            ></i>Project Background</h3>
+          <p>Air cargo loading is a complex constrained optimization problem
+            that impacts flight safety, operational efficiency, and fuel
+            efficiency. However, existing benchmarking tools suffer from
+            limitations such as small data volume, simplistic scenarios,
+            insufficient constraints, and over-reliance on synthetic data,
+            making them unable to meet industrial-grade practical requirements.
+            Co-developed by the LINC-BIT team of Beijing Institute of Technology
+            (BIT) and China TravelSky Holding Company, AirCa is built on real
+            industrial production data and dedicated to evaluating air cargo
+            loading optimization algorithms, filling the gap in industrial-grade
+            benchmarking for this field.</p>
+        </div>
+        <div class="col-md-6">
+          <h3 class="fw-semibold mb-3"><i
+              class="bi bi-star text-primary me-2"></i>Core Advantages</h3>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i
+                class="bi bi-check-circle text-success me-2"></i>Industrial-scale:
+              Based on 6.1 million cargo records and 1.1 million flight cycle
+              real production data</li>
+            <li class="mb-2"><i
+                class="bi bi-check-circle text-success me-2"></i>Full scenario
+              compatibility: Supports 10 types of mainstream civil aviation
+              aircraft models, covering single-leg / multi-leg flight scenarios
+            </li>
+            <li class="mb-2"><i
+                class="bi bi-check-circle text-success me-2"></i>Comprehensive
+              constraint coverage: Fully supports 13 core constraints for cargo
+              loading, closely aligning with real business modeling</li>
+            <li class="mb-2"><i
+                class="bi bi-check-circle text-success me-2"></i>Multi-algorithm
+              adaptation: Built-in 11 reproducible combinatorial optimization
+              baseline algorithms, including mathematical programming and
+              heuristic search</li>
+            <li class="mb-2"><i
+                class="bi bi-check-circle text-success me-2"></i>Multi-objective
+              evaluation: Multi-dimensional assessment of loading performance
+              and computational overhead, balancing practicality and efficiency
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Highlights -->
+  <section
+    id="features"
+    class="section-padding"
+  >
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center mb-5">
+          <h2 class="fw-bold display-5">Features</h2>
+          <hr class="w-25 mx-auto">
+        </div>
+      </div>
+      <div class="row g-4">
+        <!-- Feature 1 -->
+        <div class="col-md-4">
+          <div class="card feature-card h-100 p-4 shadow-sm">
+            <div class="card-body text-center">
+              <i
+                class="bi bi-box-arrow-in-down-left text-primary display-4 mb-3"></i>
+              <h5 class="card-title fw-semibold">Industrial-grade Real Data
+                Support</h5>
+              <p class="card-text">Built on real production system data from
+                China TravelSky, covering 425 domestic and international
+                airports and 10 types of mainstream civil aviation aircraft
+                models. It includes massive cargo records and flight data,
+                highly reproducing the real business scenarios and data
+                distribution of air cargo loading.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 2 -->
+        <div class="col-md-4">
+          <div class="card feature-card h-100 p-4 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-grid-1x2-fill text-primary display-4 mb-3"></i>
+              <h5 class="card-title fw-semibold">Full-dimensional Constraint
+                System</h5>
+              <p class="card-text">Fully implements 13 core constraints for air
+                cargo loading across 3 major categories, covering the entire
+                process of cargo handling, cargo hold management and loading
+                operations, accurately matching the requirements of real
+                business modeling and engineering implementation.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 3 -->
+        <div class="col-md-4">
+          <div class="card feature-card h-100 p-4 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-graph-up text-primary display-4 mb-3"></i>
+              <h5 class="card-title fw-semibold">Multiple Benchmark Testing
+                Tasks</h5>
+              <p class="card-text">Targeting the difficulties of air cargo
+                loading combinatorial optimization, three typical testing tasks
+                (multi-constraint, massive variables, multi-leg flights) are
+                designed to fully cover algorithm performance evaluation under
+                different complex scenarios.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 4 -->
+        <div class="col-md-4">
+          <div class="card feature-card h-100 p-4 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-code-slash text-primary display-4 mb-3"></i>
+              <h5 class="card-title fw-semibold">Built-in Reproducible Baseline
+                Algorithms</h5>
+              <p class="card-text">Integrates 11 classic combinatorial
+                optimization algorithms, covering two major categories
+                (mathematical programming and heuristic search), all with
+                reproducible code to support direct invocation and horizontal
+                comparison testing.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 5 -->
+        <div class="col-md-4">
+          <div class="card feature-card h-100 p-4 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-bar-chart-line text-primary display-4 mb-3"></i>
+              <h5 class="card-title fw-semibold">Multi-dimensional Evaluation
+                Metrics</h5>
+              <p class="card-text">An evaluation system is built around loading
+                business effectiveness and algorithm computational overhead,
+                comprehensively measuring algorithm practicality and performance
+                from multiple dimensions (center of gravity balance,
+                transportation revenue, operational efficiency).</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 6 -->
+        <div class="col-md-4">
+          <div class="card feature-card h-100 p-4 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-gear text-primary display-4 mb-3"></i>
+              <h5 class="card-title fw-semibold">Flexible Extension &
+                Customization</h5>
+              <p class="card-text">Supports custom test cases, quick integration
+                of new algorithms, and weight configuration for multi-objective
+                optimization. The modular architecture can flexibly adapt to
+                different business scenarios and personalized research needs.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Benchmark Data Visualization -->
+  <section
+    id="benchmark"
+    class="section-padding bg-light"
+  >
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center mb-5">
+          <h2 class="fw-bold display-5">Benchmark Test Data</h2>
+          <hr class="w-25 mx-auto">
+          <p class="text-muted">Comparison of air cargo loading performance of
+            different algorithms for typical aircraft models (Test Environment:
+            Based on China TravelSky production data, single-leg flight, all
+            constraints enabled)</p>
+        </div>
+      </div>
+
+      <!-- Core Modification: Wrap two cols with row to achieve side-by-side display -->
+      <div class="row">
+        <!-- CG Deviation Rate Chart - 6 columns (medium screen and above) -->
+        <div class="col-lg-6 col-md-6 mb-4 mb-lg-0">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <canvas
+                id="cgGapChart"
+                height="300"
+              ></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Average Computation Time Chart - 6 columns (medium screen and above) -->
+        <div class="col-lg-6 col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <canvas
+                id="computeTimeChart"
+                height="300"
+              ></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="row mt-4">
+        <div class="col-lg-10 mx-auto text-muted small">
+          <p>Note: Lower values of CG deviation rate indicate better loading
+            performance; computation time refers to the time consumed for
+            loading optimization of a single flight leg, with lower values
+            indicating higher algorithm efficiency; the test task is
+            multi-constraint cargo loading with all 13 core constraints enabled.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Relationship between Air Cargo and Flexible Combination -->
+  <section
+    id="combination-optimization"
+    class="section-padding bg-light"
+  >
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center mb-5">
+          <h2 class="fw-bold display-6">Combination Optimization Characteristics
+            of Air Cargo Loading</h2>
+          <hr class="hr-custom w-25 mx-auto">
+          <p class="text-muted mt-3">Achieve multi-objective optimization of
+            center-of-gravity safety and transportation profit based on AirCa's
+            13 core constraint systems</p>
+        </div>
+      </div>
+
+      <!-- Finite Feasible Solutions -->
+      <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+          <h3 class="fw-semibold mb-4">
+            <i class="bi bi-calculator text-primary me-2"></i>Finite Feasible
+            Solutions
+            <span
+              class="badge rounded-pill border border-primary text-primary fs-7 ms-2 py-1 px-2"
+            >Core Feature</span>
+          </h3>
+          <div class="card shadow-sm p-4 feature-card">
+            <p class="mb-0 fs-5">
+              When there are m cargo items and n cargo holds, there are
+              theoretically n<sup>m</sup> feasible loading schemes;<br>
+              <span class="text-muted">(Affected by various constraints, the
+                number of valid feasible solutions is significantly reduced,
+                actually only 0.1%-5% of the theoretical value)</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Constraint Condition System -->
+      <div class="row mb-5 g-4">
+        <div class="col-lg-10 mx-auto">
+          <h3 class="fw-semibold mb-4">
+            <i class="bi bi-shield-check text-primary me-2"></i>Constraint
+            Condition System
+            <span
+              class="badge rounded-pill border border-primary text-primary fs-7 ms-2 py-1 px-2"
+            >Constraints</span>
+          </h3>
+          <p class="mb-4">AirCa defines 13 core constraints aligned with actual
+            operations, divided into three categories to ensure loading safety,
+            feasibility and compliance:</p>
+
+          <div class="row g-3">
+            <!-- Adjust g-* value here to modify card spacing (e.g., g-2/g-4) -->
+            <!-- Cargo Constraints -->
+            <div class="col-lg-4 col-md-6 col-12">
+              <div class="card constraint-card shadow-sm h-100">
+                <!-- Add h-100 to unify height -->
+                <div class="card-body">
+                  <h5 class="card-title fw-bold fs-4 text-center">Cargo
+                    Constraints</h5> <!-- Only English + center alignment -->
+                  <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Weight Constraint</strong>: Single hold
+                      weight limit to avoid overload and imbalance</li>
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Volume Constraint</strong>: Single hold
+                      volume limit to prevent overfilling</li>
+                    <li class="mb-0"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>CG Constraint</strong>: Defined
+                      center-of-gravity boundaries to avoid aircraft control
+                      risks</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cargo Hold Constraints -->
+            <div class="col-lg-4 col-md-6 col-12">
+              <div class="card constraint-card shadow-sm h-100">
+                <!-- Add h-100 to unify height -->
+                <div class="card-body">
+                  <h5 class="card-title fw-bold fs-4 text-center">Cargo Hold
+                    Constraints</h5> <!-- Only English + center alignment -->
+                  <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>ULD Compatibility</strong>: Container type
+                      matches cargo hold specifications</li>
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Hold Exclusivity</strong>: Only one ULD per
+                      hold to prevent stacking</li>
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Cargo Type</strong>: Holds only accommodate
+                      specified cargo types</li>
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Front/Rear Holds</strong>: Short-haul cargo
+                      prioritized in rear holds to reduce costs</li>
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Special Constraints</strong>: Certain
+                      dangerous goods prohibited in specific holds</li>
+                    <li class="mb-0"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>ULD Correspondence</strong>: Holds only
+                      accept compatible containers</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Loading Operation Constraints -->
+            <div class="col-lg-4 col-md-6 col-12">
+              <div class="card constraint-card shadow-sm h-100">
+                <!-- Add h-100 to unify height -->
+                <div class="card-body">
+                  <h5 class="card-title fw-bold fs-4 text-center">Loading
+                    Operation Constraints</h5>
+                  <!-- Only English + center alignment -->
+                  <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Dangerous Goods Isolation</strong>: Safe
+                      distance between incompatible dangerous goods</li>
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Combined Weight</strong>: Combined weight
+                      limit for adjacent cargo holds</li>
+                    <li class="mb-2"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Continuous Loading</strong>: No gaps between
+                      cargo to prevent shifting during transport</li>
+                    <li class="mb-0"><i
+                        class="bi bi-check-circle text-success me-2"
+                      ></i><strong>Loading Sequence</strong>: Short-haul cargo
+                      placed outside long-haul cargo for easy unloading</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Objective Function -->
+      <div class="row">
+        <div class="col-lg-10 mx-auto">
+          <h3 class="fw-semibold mb-4">
+            <i class="bi bi-bullseye text-primary me-2"></i>Multi-Objective
+            Optimization Function
+            <span
+              class="badge rounded-pill border border-primary text-primary fs-7 ms-2 py-1 px-2"
+            >Objectives</span>
+          </h3>
+
+          <!-- Core Objectives -->
+          <div class="card target-card shadow-sm mb-3 feature-card">
+            <div class="card-body">
+              <h5 class="card-title fw-bold fs-4 text-primary"> Optimization
+                Objectives:
+              </h5>
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <h6 class="fw-medium">
+                    <i
+                      class="bi bi-arrow-down-up text-primary me-2"></i>Minimize
+                    CG Deviation
+                  </h6>
+                  <p class="small mb-2">Lower CG deviation values indicate
+                    better weight distribution, reducing trim drag and improving
+                    fuel efficiency.<br>
+                  </p>
+                  <!-- New: CG Optimization Effect Line Chart (same height as price chart on the right) -->
+                  <div
+                    class="chart-container"
+                    style="height: 200px;"
+                  >
+                    <canvas id="cgOptimizeChart"></canvas>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <h6 class="fw-medium">
+                    <i class="bi bi-cash-coin text-primary me-2"></i>Maximize
+                    Transportation Profit
+                  </h6>
+                  <p class="small mb-2">Pricing based on industry-standard
+                    weight tiered rates (referencing TPE–DFW route)</p>
+                  <!-- Original: Weight Tiered Pricing Line Chart -->
+                  <div
+                    class="chart-container"
+                    style="height: 200px;"
+                  >
+                    <canvas id="priceTierChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optimization Modes -->
+          <div class="card target-card shadow-sm mb-4 feature-card">
+            <div class="card-body">
+              <h5 class="card-title fw-bold fs-4 text-primary"> Optimization
+                Modes: </h5>
+              <ul class="list-unstyled mb-3">
+                <li class="mb-2"><i
+                    class="bi bi-gear text-secondary me-2"></i><strong>CG
+                    Priority</strong> (w<sub>cg</sub>=1.0, w<sub>rev</sub>=0.0):
+                  Strictly ensure flight safety</li>
+                <li class="mb-2"><i
+                    class="bi bi-gear text-secondary me-2"></i><strong>Profit
+                    Priority</strong> (w<sub>cg</sub>=0.0, w<sub>rev</sub>=1.0):
+                  Maximize revenue while meeting CG constraints</li>
+                <li class="mb-0"><i
+                    class="bi bi-gear text-secondary me-2"></i><strong>Balanced
+                    Mode</strong>: Slightly sacrifice CG precision to achieve
+                  significant profit improvement, realizing comprehensive
+                  optimization of safety, cost and revenue</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- Quick Start -->
+  <section
+    id="quickstart"
+    class="section-padding"
+  >
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center mb-5">
+          <h2 class="fw-bold display-5">Quick Start</h2>
+          <hr class="w-25 mx-auto">
+        </div>
+      </div>
+      <!-- 步骤1：下载压缩包 -->
+      <div class="card step-card mb-3 col-lg-10 mx-auto">
+        <div class="card-header bg-light">
+          <h3 class="fw-semibold mb-0"><i class="fas fa-download text-primary me-2"></i>Step 1:
+            Download Demo Package</h3>
+        </div>
+        <div class="card-body pt-3 pb-0 ">
+          <a
+            href="airca-benchmark-demo-cases.zip"
+            class="btn btn-lg download-btn text-white mb-3"
+            download
+          >
+            <i class="fas fa-file-zipper me-2"></i>Download
+            airca-benchmark-demo-cases.zip
+          </a>
+        </div>
+      </div>
+
+      <!-- 步骤2：环境准备 -->
+      <div class="card step-card mb-3 col-lg-10 mx-auto">
+        <div class="card-header bg-light">
+          <h3 class="fw-semibold mb-0"><i class="fas fa-cogs text-primary me-2"></i>Step 2: Prepare
+            Environment</h3>
+        </div>
+        <div class="card-body">
+          <p>Open the terminal/command prompt, navigate to the unzipped
+            directory, and install the required dependencies:</p>
+          <!-- 替换为原版 pre+code 结构 -->
+          <pre class="bg-light p-3 rounded mb-3"><code>
+cd "&lt;YOUR_UNZIPPED_PATH&gt;/airca-benchmark-demo-cases"
+
+pip install -r requirements.txt
+        </code></pre>
+          <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              replace <strong>&lt;YOUR_UNZIPPED_PATH&gt;</strong> with your actual
+              unzip path (e.g. "C:\Users\YourName\Downloads").
+          </div>
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Ensure you have Python 3.8+ installed before executing the above
+            commands.
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- 步骤3：运行演示案例 -->
+      <div class="card step-card col-lg-10 mx-auto">
+        <div class="card-header bg-light">
+          <h3 class="fw-semibold mb-0"><i class="fas fa-play-circle text-primary me-2"></i>Step 3: Run
+            Demo Cases</h3>
+        </div>
+        <div class="card-body">
+          <p>Run the following commands to execute different demo cases:</p>
+
+          <!-- 案例列表 -->
+          <div
+            class="accordion mb-3"
+            id="caseAccordion"
+          >
+            <!-- 案例1 -->
+            <div class="accordion-item">
+              <h2
+                class="accordion-header"
+                id="heading1"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse1"
+                  aria-expanded="false"
+                  aria-controls="collapse1"
+                >
+                  Case 1: 
+                </button>
+              </h2>
+              <div
+                id="collapse1"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading1"
+                data-bs-parent="#caseAccordion"
+              >
+                <div class="accordion-body">
+                  <!-- 替换为原版 pre+code 结构 -->
+                  <pre class="bg-light p-3 rounded position-relative"><code>
+python ".\code\multi_constraint_cargo_loading\Aircraft_configuration_comparison.py" --root-dir "." --flight-number "3760461293" --algos all --time-limit 120</code>
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 案例2 -->
+            <div class="accordion-item">
+              <h2
+                class="accordion-header"
+                id="heading2"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse2"
+                  aria-expanded="false"
+                  aria-controls="collapse2"
+                >
+                  Case 2: 
+                </button>
+              </h2>
+              <div
+                id="collapse2"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading2"
+                data-bs-parent="#caseAccordion"
+              >
+                <div class="accordion-body">
+                  <!-- 替换为原版 pre+code 结构 -->
+                  <pre class="bg-light p-3 rounded"><code>
+python ".\code\multi_constraint_cargo_loading\Aircraft_configuration_comparison.py" --root-dir "." --flight-number "3760564124" --algos all --time-limit 120</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 案例3 -->
+            <div class="accordion-item">
+              <h2
+                class="accordion-header"
+                id="heading3"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse3"
+                  aria-expanded="false"
+                  aria-controls="collapse3"
+                >
+                  Case 3: 
+                </button>
+              </h2>
+              <div
+                id="collapse3"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading3"
+                data-bs-parent="#caseAccordion"
+              >
+                <div class="accordion-body">
+                  <!-- 替换为原版 pre+code 结构 -->
+                  <pre class="bg-light p-3 rounded"><code>
+python ".\code\multi_constraint_cargo_loading\Aircraft_configuration_comparison.py" --root-dir "." --flight-number "3760586741" --algos all --time-limit 120</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 案例4 -->
+            <div class="accordion-item">
+              <h2
+                class="accordion-header"
+                id="heading4"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse4"
+                  aria-expanded="false"
+                  aria-controls="collapse4"
+                >
+                  Case 4:
+                </button>
+              </h2>
+              <div
+                id="collapse4"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading4"
+                data-bs-parent="#caseAccordion"
+              >
+                <div class="accordion-body">
+                  <!-- 替换为原版 pre+code 结构 -->
+                  <pre class="bg-light p-3 rounded"><code>
+python ".\code\multi_constraint_cargo_loading\Aircraft_configuration_comparison.py" --root-dir "." --flight-number "3760564773" --algos all --time-limit 120</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 案例5 -->
+            <div class="accordion-item">
+              <h2
+                class="accordion-header"
+                id="heading5"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse5"
+                  aria-expanded="false"
+                  aria-controls="collapse5"
+                >
+                  Case 5: 
+                </button>
+              </h2>
+              <div
+                id="collapse5"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading5"
+                data-bs-parent="#caseAccordion"
+              >
+                <div class="accordion-body">
+                  <!-- 替换为原版 pre+code 结构 -->
+                  <pre class="bg-light p-3 rounded"><code>
+python ".\code\multi_constraint_cargo_loading\Aircraft_configuration_comparison.py" --root-dir "." --flight-number "3760923753" --algos all --time-limit 120</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section
+    id="faq"
+    class="section-padding bg-light"
+  >
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center mb-5">
+          <h2 class="fw-bold display-5">FAQ</h2>
+          <hr class="w-25 mx-auto">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div
+            class="accordion"
+            id="faqAccordion"
+          >
+            <!-- FAQ 1 -->
+            <div class="accordion-item mb-3 shadow-sm">
+              <h2
+                class="accordion-header"
+                id="faq1"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse1"
+                >
+                  Which aircraft models does the AirCa dataset support for cargo
+                  loading research?
+                </button>
+              </h2>
+              <div
+                id="collapse1"
+                class="accordion-collapse collapse"
+                data-bs-parent="#faqAccordion"
+              >
+                <div class="accordion-body">
+                  The AirCa dataset covers 6 mainstream aircraft models, with
+                  core support for cargo loading research on A320 (narrow-body
+                  aircraft), B777 (wide-body aircraft), C919 and other models,
+                  while also including relevant cargo data for A319, A321, B787
+                  and other models.
+                </div>
+              </div>
+            </div>
+            <!-- FAQ 2 -->
+            <div class="accordion-item mb-3 shadow-sm">
+              <h2
+                class="accordion-header"
+                id="faq2"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse2"
+                >
+                  How to correctly place AirCa dataset files to avoid runtime
+                  errors?
+                </button>
+              </h2>
+              <div
+                id="collapse2"
+                class="accordion-collapse collapse"
+                data-bs-parent="#faqAccordion"
+              >
+                <div class="accordion-body">
+                  The downloaded dataset files need to be placed in the
+                  <code>./data/raw/</code> path of the project root directory.
+                  This directory must be organized into two subdirectories:
+                  <code>split_by_aircraft_type</code> (CSV files categorized by
+                  aircraft type) and <code>split_by_date</code> (CSV files
+                  categorized by date) to ensure scripts can read data
+                  correctly.
+                </div>
+              </div>
+            </div>
+            <!-- FAQ 3 -->
+            <div class="accordion-item mb-3 shadow-sm">
+              <h2
+                class="accordion-header"
+                id="faq3"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse3"
+                >
+                  What dependencies need to be installed before running AirCa
+                  experiments?
+                </button>
+              </h2>
+              <div
+                id="collapse3"
+                class="accordion-collapse collapse"
+                data-bs-parent="#faqAccordion"
+              >
+                <div class="accordion-body">
+                  First, after cloning the project source code, execute
+                  <code>pip install -r requirements.txt</code> in the project
+                  root directory to automatically install all Python dependency
+                  libraries required for running cargo loading experiments,
+                  eliminating the need for manual installation of each library.
+                </div>
+              </div>
+            </div>
+            <!-- FAQ 4 -->
+            <div class="accordion-item mb-3 shadow-sm">
+              <h2
+                class="accordion-header"
+                id="faq4"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse4"
+                >
+                  What are the three core experimental workloads of AirCa?
+                </button>
+              </h2>
+              <div
+                id="collapse4"
+                class="accordion-collapse collapse"
+                data-bs-parent="#faqAccordion"
+              >
+                <div class="accordion-body">
+                  AirCa extracts three representative cargo loading workloads:
+                  1. Multi-constraint cargo loading (modeling and optimization
+                  with intertwined multiple constraints); 2. Large-scale
+                  variable cargo loading (optimization of massive decision
+                  variables caused by fine-grained cargo splitting); 3.
+                  Multi-segment cargo loading (multi-stage and multi-objective
+                  cargo loading optimization), all of which are practical core
+                  issues in air cargo loading.
+                </div>
+              </div>
+            </div>
+            <!-- FAQ 5 -->
+            <div class="accordion-item mb-3 shadow-sm">
+              <h2
+                class="accordion-header"
+                id="faq5"
+              >
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse5"
+                >
+                  How to download datasets for specified aircraft models/dates
+                  via AirCa's API?
+                </button>
+              </h2>
+              <div
+                id="collapse5"
+                class="accordion-collapse collapse"
+                data-bs-parent="#faqAccordion"
+              >
+                <div class="accordion-body">
+                  Precise downloading can be achieved through the
+                  <code>DataDownloader</code> API provided by AirCa. After
+                  instantiating <code>AirCaDownloader</code>, call the
+                  <code>download_AirCa()</code> method, specify the aircraft
+                  model via the <code>aircraft_type</code> parameter (e.g.,
+                  A320) and the date via the <code>date</code> parameter. If
+                  both parameters are set to None, the full dataset will be
+                  downloaded.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <h5 class="text-white fw-semibold mb-3"><i
+              class="bi bi-speedometer2 me-2"
+            ></i>AirCa</h5>
+          <p>An industrial-grade, highly realistic, multi-dimensional
+            combinatorial optimization algorithm benchmarking solution tailored
+            for air cargo loading scenarios.</p>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="text-white fw-semibold mb-3">Quick Links</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="bi bi-github me-2"></i><a
+                href="https://github.com/LINC-BIT/AirCa"
+                class="text-decoration-none"
+                style="color: #E2E5E8"
+              >GitHub</a></li>
+            <li class="mb-2"><i class="bi bi-download me-2"></i><a
+                href="https://huggingface.co/datasets/LINC-BIT/AirCa"
+                class="text-decoration-none "
+                style="color: #E2E5E8"
+              >Dataset Download</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="text-white fw-semibold mb-3">Contact Us</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2 d-none"><i
+                class="bi bi-envelope me-2"></i>linc-bit@example.com</li>
+            <li class="mb-2"><i class="bi bi-github me-2"></i><a
+                href="https://github.com/LINC-BIT"
+                class="text-decoration-none"
+                style="color: #E2E5E8"
+              >@LINC-BIT</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="text-center">
+        <p>&copy; 2024 LINC-BIT. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  ></script>
+
+  <script>
+    // ========== 第一步：静态常量/数据（执行优先级最高，无依赖） ==========
+    // Cargo Static Data
+    const caseData = {
+      1: [
+        { ID: 1, Uld: 'P6P', Type: 'C', Weight: 2918, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF', Priority: 1 },
+        { ID: 2, Uld: 'P6P', Type: 'C', Weight: 2880, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF', Priority: 1 },
+        { ID: 3, Uld: 'P6P', Type: 'C', Weight: 4353, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF', Priority: 1 },
+        { ID: 4, Uld: 'P6P', Type: 'C', Weight: 3946, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF', Priority: 1 },
+        { ID: 5, Uld: 'P6P', Type: 'C', Weight: 3188, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF', Priority: 1 },
+        { ID: 6, Uld: 'P6P', Type: 'C', Weight: 3500, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF', Priority: 1 },
+        { ID: 7, Uld: 'P6P', Type: 'C', Weight: 4349, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF', Priority: 1 },
+        { ID: 8, Uld: 'P6P', Type: 'C', Weight: 3258, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF/XLM', Priority: 1 },
+        { ID: 9, Uld: 'P6P', Type: 'C', Weight: 4055, Volume: 0, Destination: 'FRA', SpecialCode: 'PPP', Priority: 1 },
+        { ID: 10, Uld: 'PLA', Type: 'C', Weight: 1534, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF', Priority: 1 },
+        { ID: 11, Uld: 'PLA', Type: 'C', Weight: 1487, Volume: 0, Destination: 'FRA', SpecialCode: 'FFF', Priority: 1 },
+        { ID: 12, Uld: 'LD3', Type: 'C', Weight: 1429, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 13, Uld: 'LD3', Type: 'C', Weight: 1175, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 14, Uld: 'LD3', Type: 'C', Weight: 1039, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 15, Uld: 'LD3', Type: 'C', Weight: 1027, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 16, Uld: 'BULK', Type: 'C', Weight: 764, Volume: 4, Destination: 'FRA', SpecialCode: '04M D0437', Priority: 1 },
+        { ID: 17, Uld: 'BULK', Type: 'C', Weight: 151, Volume: 2, Destination: 'FRA', SpecialCode: '02M D1669', Priority: 1 },
+        { ID: 18, Uld: 'LD3', Type: 'BF', Weight: 563, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 19, Uld: 'LD3', Type: 'BF', Weight: 562, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 20, Uld: 'LD3', Type: 'B', Weight: 563, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 21, Uld: 'LD3', Type: 'B', Weight: 563, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 22, Uld: 'LD3', Type: 'BT', Weight: 563, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 23, Uld: 'LD3', Type: 'BT', Weight: 563, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 24, Uld: 'LD3', Type: 'B', Weight: 563, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 25, Uld: 'LD3', Type: 'B', Weight: 563, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 },
+        { ID: 26, Uld: 'BULK', Type: 'B', Weight: 20, Volume: 0, Destination: 'FRA', SpecialCode: '', Priority: 1 }
+      ],
+      2: [
+        { ID: 1, Uld: 'LD3', Type: 'B', Weight: 554, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 2, Uld: 'LD3', Type: 'B', Weight: 554, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 3, Uld: 'LD3', Type: 'B', Weight: 553, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 4, Uld: 'LD3', Type: 'B', Weight: 553, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 5, Uld: 'LD3', Type: 'B', Weight: 554, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 6, Uld: 'LD3', Type: 'B', Weight: 554, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 7, Uld: 'LD3', Type: 'B', Weight: 554, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 8, Uld: 'LD3', Type: 'B', Weight: 554, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 9, Uld: 'LD3', Type: 'B', Weight: 554, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 10, Uld: 'BULK', Type: 'B', Weight: 517, Volume: 0, Destination: 'PEK', SpecialCode: 'AVI', Priority: 1 }
+      ],
+      3: [
+        { ID: 1, Uld: 'P6P', Type: 'E', Weight: 1540, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 2, Uld: 'LD3', Type: 'C', Weight: 260, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 3, Uld: 'LD3', Type: 'B', Weight: 621, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 4, Uld: 'LD3', Type: 'B', Weight: 621, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 5, Uld: 'LD3', Type: 'B', Weight: 621, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 6, Uld: 'LD3', Type: 'B', Weight: 621, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 7, Uld: 'LD3', Type: 'B', Weight: 621, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 8, Uld: 'LD3', Type: 'B', Weight: 621, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 9, Uld: 'LD3', Type: 'B', Weight: 621, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 10, Uld: 'LD3', Type: 'B', Weight: 622, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 11, Uld: 'LD3', Type: 'B', Weight: 621, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 12, Uld: 'BULK', Type: 'B', Weight: 56, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 }
+      ],
+      4: [
+        { ID: 1, Uld: 'BULK', Type: 'M', Weight: 63, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 2, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 3, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 4, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 5, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 6, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 7, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 8, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 9, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 10, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 11, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 12, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 13, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 14, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 15, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 16, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 17, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 18, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 19, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 20, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 21, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 22, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 23, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 24, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 25, Uld: 'LD3', Type: 'X', Weight: 100, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 26, Uld: 'BULK', Type: 'M', Weight: 93, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 27, Uld: 'BULK', Type: 'M', Weight: 132, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 28, Uld: 'LD3', Type: 'B', Weight: 544, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 29, Uld: 'LD3', Type: 'B', Weight: 544, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 30, Uld: 'LD3', Type: 'B', Weight: 544, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 31, Uld: 'LD3', Type: 'B', Weight: 544, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 32, Uld: 'LD3', Type: 'B', Weight: 544, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 33, Uld: 'LD3', Type: 'B', Weight: 544, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 34, Uld: 'LD3', Type: 'B', Weight: 542, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 35, Uld: 'LD3', Type: 'B', Weight: 542, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 36, Uld: 'LD3', Type: 'B', Weight: 542, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 37, Uld: 'BULK', Type: 'B', Weight: 262, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 38, Uld: 'LD3', Type: 'B', Weight: 544, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 }
+      ],
+      5: [
+        { ID: 1, Uld: 'P6P', Type: 'C', Weight: 2214, Volume: 0, Destination: 'PEK', SpecialCode: 'PER/ICE/ICE/PER', Priority: 1 },
+        { ID: 2, Uld: 'P6P', Type: 'C', Weight: 1112, Volume: 0, Destination: 'PEK', SpecialCode: 'PER/ICE', Priority: 1 },
+        { ID: 3, Uld: 'BULK', Type: 'C', Weight: 15, Volume: 0, Destination: 'PEK', SpecialCode: 'AVI', Priority: 1 },
+        { ID: 4, Uld: 'LD3', Type: 'B', Weight: 647, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 5, Uld: 'LD3', Type: 'B', Weight: 647, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 6, Uld: 'LD3', Type: 'B', Weight: 647, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 7, Uld: 'LD3', Type: 'B', Weight: 647, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 8, Uld: 'LD3', Type: 'B', Weight: 647, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 9, Uld: 'LD3', Type: 'B', Weight: 645, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 10, Uld: 'LD3', Type: 'B', Weight: 645, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 11, Uld: 'LD3', Type: 'B', Weight: 645, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 12, Uld: 'LD3', Type: 'B', Weight: 645, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 13, Uld: 'LD3', Type: 'B', Weight: 645, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 14, Uld: 'LD3', Type: 'B', Weight: 645, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 15, Uld: 'LD3', Type: 'B', Weight: 645, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 },
+        { ID: 16, Uld: 'BULK', Type: 'B', Weight: 345, Volume: 0, Destination: 'PEK', SpecialCode: '', Priority: 1 }
+      ]
+    };
+
+    // Cabin Static Data
+    const cabinImageData = {
+      1: 'B777',
+      2: 'B777',
+      3: 'B777',
+      4: 'B777',
+      5: 'B777'
+    };
+
+    // 舱位布局数据：按机型分类，每个机型下以舱位编号为key存储位置尺寸信息
+    const cargoLayoutData = {
+      // B777机型的所有舱位信息
+      B777: {
+        "44L": { top: 40.3, left: 5.6, width: 3.7, height: 8.2 },
+        "43L": { top: 40.3, left: 9.7, width: 3.6, height: 8.2 },
+        "42L": { top: 40.3, left: 13.8, width: 3.5, height: 8.2 },
+        "41L": { top: 40.3, left: 17.6, width: 3.5, height: 8.2 },
+        "36L": { top: 40.3, left: 25.1, width: 3.5, height: 8.2 },
+        "35L": { top: 40.3, left: 29.0, width: 3.5, height: 8.2 },
+        "34L": { top: 40.3, left: 32.8, width: 3.5, height: 8.2 },
+        "33L": { top: 40.3, left: 36.5, width: 3.5, height: 8.2 },
+        "32L": { top: 40.3, left: 40.3, width: 3.5, height: 8.2 },
+        "31L": { top: 40.3, left: 44.2, width: 3.5, height: 8.2 },
+        "28L": { top: 40.3, left: 50.2, width: 2.9, height: 8.2 },
+        "27L": { top: 40.3, left: 53.6, width: 2.9, height: 8.2 },
+        "26L": { top: 40.3, left: 57.0, width: 2.9, height: 8.2 },
+        "25L": { top: 40.3, left: 60.3, width: 2.9, height: 8.2 },
+        "24L": { top: 40.3, left: 63.7, width: 2.9, height: 8.2 },
+        "23L": { top: 40.3, left: 67.0, width: 2.9, height: 8.2 },
+        "22L": { top: 40.3, left: 70.4, width: 3.0, height: 8.2 },
+        "21L": { top: 40.3, left: 73.7, width: 3.0, height: 8.2 },
+        "14L": { top: 40.3, left: 80.4, width: 2.9, height: 8.2 },
+        "13L": { top: 40.3, left: 83.8, width: 2.9, height: 8.2 },
+        "12L": { top: 40.3, left: 87.2, width: 2.9, height: 8.2 },
+        "11L": { top: 40.3, left: 90.6, width: 2.9, height: 8.2 },
+        "44R": { top: 49.3, left: 5.6, width: 3.7, height: 8.2 },
+        "43R": { top: 49.3, left: 9.7, width: 3.6, height: 8.2 },
+        "42R": { top: 49.3, left: 13.8, width: 3.5, height: 8.2 },
+        "41R": { top: 49.3, left: 17.6, width: 3.5, height: 8.2 },
+        "36R": { top: 49.3, left: 25.1, width: 3.5, height: 8.2 },
+        "35R": { top: 49.3, left: 29.0, width: 3.5, height: 8.2 },
+        "34R": { top: 49.3, left: 32.8, width: 3.5, height: 8.2 },
+        "33R": { top: 49.3, left: 36.5, width: 3.5, height: 8.2 },
+        "32R": { top: 49.3, left: 40.3, width: 3.5, height: 8.2 },
+        "31R": { top: 49.3, left: 44.2, width: 3.5, height: 8.2 },
+        "28R": { top: 49.3, left: 50.2, width: 2.9, height: 8.2 },
+        "27R": { top: 49.3, left: 53.6, width: 2.9, height: 8.2 },
+        "26R": { top: 49.3, left: 57.0, width: 2.9, height: 8.2 },
+        "25R": { top: 49.3, left: 60.3, width: 2.9, height: 8.2 },
+        "24R": { top: 49.3, left: 63.7, width: 2.9, height: 8.2 },
+        "23R": { top: 49.3, left: 67.0, width: 2.9, height: 8.2 },
+        "22R": { top: 49.3, left: 70.4, width: 3.0, height: 8.2 },
+        "21R": { top: 49.3, left: 73.7, width: 3.0, height: 8.2 },
+        "14R": { top: 49.3, left: 80.4, width: 2.9, height: 8.2 },
+        "13R": { top: 49.3, left: 83.8, width: 2.9, height: 8.2 },
+        "12R": { top: 49.3, left: 87.2, width: 2.9, height: 8.2 },
+        "11R": { top: 49.3, left: 90.6, width: 2.9, height: 8.2 }
+      },
+      // 后续新增其他机型（如B787），直接按这个格式加即可
+      // B787: {
+      //   "1A": { top: xx, left: xx, width: xx, height: xx },
+      //   ...
+      // }
+    };
+
+    const subPosMap = {
+      // B777机型的重型、中型舱位映射
+      B777: {
+        "11": ["11L", "11R"],
+        "11P": ["11L", "11R"],
+        "12": ["12L", "12R"],
+        "12P": ["12L", "12R", "13L", "13R"],
+        "13": ["13L", "13R"],
+        "13P": ["13L", "13R", "14L", "14R", "21L", "21R"],
+        "14": ["14L", "14R"],
+        "21": ["21L", "21R"],
+        "21P": ["21L", "21R", "22L", "22R"],
+        "22": ["22L", "22R"],
+        "22P": ["22L", "22R", "23L", "23R", "24L", "24R"],
+        "23": ["23L", "23R"],
+        "24": ["24L", "24R"],
+        "23P": ["24L", "24R", "25L", "25R"],
+        "25": ["25L", "25R"],
+        "26": ["26L", "26R"],
+        "24P": ["25L", "25R", "26L", "26R", "27L", "27R"],
+        "27": ["27L", "27R"],
+        "25P": ["27L", "27R", "28L", "28R"],
+        "28": ["28L", "28R"],
+        "31": ["31L", "31R"],
+        "31P": ["31L", "31R", "32L", "32R"],
+        "32": ["32L", "32R"],
+        "32P": ["32L", "32R", "33L", "33R", "34L", "34R"],
+        "33": ["33L", "33R"],
+        "34": ["34L", "34R"],
+        "33P": ["34L", "34R", "35L", "35R"],
+        "35": ["35L", "35R"],
+        "34P": ["35L", "35R", "36L", "36R", "41L", "41R"],
+        "36": ["36L", "36R"],
+        "41": ["41L", "41R"],
+        "42": ["42L", "42R"],
+        "41P": ["41L", "41R", "42L", "42R", "43L", "43R"],
+        "43": ["43L", "43R"],
+        "42P": ["43L", "43R", "44L", "44R"],
+        "44": ["44L", "44R"]
+      }
+    };
+
+    // 核心装载方案数据结构：案例号 → 算法名 → 装载方案（货物ID: 舱位ID）
+    const loadingSchemeData = {
+      // 案例1的所有算法方案
+      1: {
+        MILP: {
+          "3": "42P",
+          "4": "23P",
+          "5": "13P",
+          "6": "22P",
+          "7": "25P",
+          "8": "21P",
+          "9": "24P",
+          "11": "41",
+          "18": "42L",
+          "19": "35R",
+          "20": "42R",
+          "23": "36L",
+          "24": "36R",
+          "25": "35L"
+        },
+        MINLP: {
+          "3": "42P",
+          "4": "23P",
+          "5": "13P",
+          "6": "22P",
+          "7": "25P",
+          "8": "21P",
+          "9": "24P",
+          "11": "41",
+          "18": "42L",
+          "19": "35R",
+          "20": "42R",
+          "23": "36L",
+          "24": "36R",
+          "25": "35L"
+        },
+        QP: {
+          "3": "42P",
+          "4": "23P",
+          "5": "13P",
+          "6": "22P",
+          "7": "25P",
+          "8": "21P",
+          "9": "24P",
+          "11": "41",
+          "18": "42L",
+          "19": "35R",
+          "20": "42R",
+          "23": "36L",
+          "24": "36R",
+          "25": "35L"
+        },
+        DP: {
+          "1": "25P",
+          "2": "42P",
+          "4": "21P",
+          "5": "24P",
+          "6": "22P",
+          "8": "23P",
+          "9": "13P",
+          "10": "41",
+          "12": "35R",
+          "13": "35L",
+          "14": "36R",
+          "15": "36L",
+          "22": "42L",
+          "23": "42R"
+        },
+        CP: {
+          "1": "42P",
+          "2": "25P",
+          "3": "24P",
+          "4": "23P",
+          "5": "22P",
+          "6": "21P",
+          "7": "13P",
+          "11": "41",
+          "18": "42L",
+          "19": "42R",
+          "22": "36L",
+          "23": "36R",
+          "24": "35L",
+          "25": "35R"
+        },
+        GA: {
+          "3": "42P",
+          "7": "24P",
+          "8": "22P",
+          "13": "34L",
+          "14": "13R",
+          "23": "36L"
+        },
+        PSO: {
+          "3": "42P",
+          "7": "23P",
+          "8": "21P",
+          "15": "27L",
+          "19": "35R",
+          "20": "42L",
+          "23": "35L",
+          "24": "36R"
+        },
+        CS: {
+          "3": "42P",
+          "7": "21P",
+          "9": "13P",
+          "10": "35",
+          "11": "41",
+          "13": "33R",
+          "14": "42R",
+          "15": "31R",
+          "19": "36R",
+          "20": "24R",
+          "21": "34R",
+          "24": "32R"
+        },
+        ACO: {
+          "14": "21L"
+        },
+        ABC: {
+          "3": "42P",
+          "7": "24P",
+          "8": "22P",
+          "9": "23P",
+          "10": "35",
+          "12": "36L",
+          "14": "42L",
+          "15": "41L",
+          "18": "36R",
+          "19": "33R",
+          "22": "28R",
+          "25": "12L"
+        },
+        MBO: {
+          "3": "21P",
+          "6": "22P",
+          "9": "42P",
+          "10": "11",
+          "18": "36R",
+          "19": "28R",
+          "22": "33R",
+          "23": "41L"
+        }
+      },
+      // 案例2的所有算法方案（示例结构，后续填充）
+      2: {
+        MILP: {
+          "1": "11L",
+          "2": "11R",
+          "3": "42L",
+          "4": "12R",
+          "5": "12L",
+          "6": "31L",
+          "7": "35L",
+          "8": "42R",
+          "9": "41L",
+          "10": "NOT_LOADED"
+        },
+        MINLP: {
+          "1": "11L",
+          "2": "11R",
+          "3": "42L",
+          "4": "12R",
+          "5": "12L",
+          "6": "31L",
+          "7": "35L",
+          "8": "42R",
+          "9": "41L",
+          "10": "NOT_LOADED"
+        },
+        QP: {
+          "1": "44L",
+          "2": "44R",
+          "3": "41R",
+          "4": "36L",
+          "5": "43L",
+          "6": "43R",
+          "7": "42L",
+          "8": "42R",
+          "9": "41L",
+          "10": "NOT_LOADED"
+        },
+        DP: {
+          "1": "43L",
+          "2": "43R",
+          "3": "44L",
+          "4": "44R",
+          "5": "42L",
+          "6": "42R",
+          "7": "41L",
+          "8": "41R",
+          "9": "36L",
+          "10": "NOT_LOADED"
+        },
+        CP: {
+          "1": "44L",
+          "2": "44R",
+          "3": "43L",
+          "4": "43R",
+          "5": "42L",
+          "6": "42R",
+          "7": "41L",
+          "8": "41R",
+          "9": "36L",
+          "10": "NOT_LOADED"
+        },
+        GA: {
+          "1": "24R",
+          "2": "26R",
+          "3": "NOT_LOADED",
+          "4": "21R",
+          "5": "35L",
+          "6": "36R",
+          "7": "22R",
+          "8": "21L",
+          "9": "44R",
+          "10": "NOT_LOADED"
+        },
+        PSO: {
+          "1": "NOT_LOADED",
+          "2": "32L",
+          "3": "NOT_LOADED",
+          "4": "21L",
+          "5": "35R",
+          "6": "14L",
+          "7": "33L",
+          "8": "24R",
+          "9": "27R",
+          "10": "NOT_LOADED"
+        },
+        CS: {
+          "1": "27L",
+          "2": "28L",
+          "3": "22L",
+          "4": "25L",
+          "5": "43L",
+          "6": "27R",
+          "7": "13L",
+          "8": "42R",
+          "9": "33L",
+          "10": "NOT_LOADED"
+        },
+        ACO: {
+          "1": "NOT_LOADED",
+          "2": "NOT_LOADED",
+          "3": "NOT_LOADED",
+          "4": "NOT_LOADED",
+          "5": "22L",
+          "6": "21L",
+          "7": "NOT_LOADED",
+          "8": "NOT_LOADED",
+          "9": "NOT_LOADED",
+          "10": "NOT_LOADED"
+        },
+        ABC: {
+          "1": "44R",
+          "2": "36R",
+          "3": "11L",
+          "4": "11R",
+          "5": "14L",
+          "6": "28R",
+          "7": "26R",
+          "8": "33L",
+          "9": "41R",
+          "10": "NOT_LOADED"
+        },
+        MBO: {
+          "1": "41R",
+          "2": "12R",
+          "3": "12L",
+          "4": "36L",
+          "5": "26L",
+          "6": "34R",
+          "7": "33L",
+          "8": "27L",
+          "9": "24R",
+          "10": "NOT_LOADED"
+        }
+      },
+      // 案例3~5按相同结构扩展
+      3: {
+        MILP: {
+          "1": "13P",
+          "2": "11L",
+          "3": "11R",
+          "4": "12L",
+          "5": "28L",
+          "6": "36R",
+          "7": "42R",
+          "8": "41L",
+          "9": "41R",
+          "10": "42L",
+          "11": "36L",
+          "12": "NOT_LOADED"
+        },
+        MINLP: {
+          "1": "13P",
+          "2": "11L",
+          "3": "11R",
+          "4": "12L",
+          "5": "28L",
+          "6": "36R",
+          "7": "42R",
+          "8": "41L",
+          "9": "41R",
+          "10": "42L",
+          "11": "36L",
+          "12": "NOT_LOADED"
+        },
+        QP: {
+          "1": "42P",
+          "2": "36R",
+          "6": "42L",
+          "7": "42R",
+          "8": "41L",
+          "9": "41R",
+          "11": "36L",
+          "12": "NOT_LOADED"
+        },
+        DP: {
+          "1": "42P",
+          "6": "42L",
+          "7": "42R",
+          "8": "41L",
+          "9": "41R",
+          "10": "36R",
+          "11": "36L",
+          "12": "NOT_LOADED"
+        },
+        CP: {
+          "1": "42P",
+          "6": "42L",
+          "7": "42R",
+          "8": "41L",
+          "9": "41R",
+          "10": "36L",
+          "11": "36R",
+          "12": "NOT_LOADED"
+        },
+        GA: {
+          "1": "25P",
+          "2": "NOT_LOADED",
+          "3": "43R",
+          "4": "36L",
+          "5": "26R",
+          "6": "11R",
+          "7": "35R",
+          "8": "32L",
+          "9": "23L",
+          "11": "NOT_LOADED",
+          "12": "NOT_LOADED"
+        },
+        PSO: {
+          "1": "21P",
+          "2": "41L",
+          "4": "42R",
+          "5": "32R",
+          "6": "23L",
+          "7": "36L",
+          "8": "NOT_LOADED",
+          "9": "NOT_LOADED",
+          "10": "31L",
+          "11": "NOT_LOADED",
+          "12": "NOT_LOADED"
+        },
+        CS: {
+          "1": "21P",
+          "2": "33L",
+          "4": "27L",
+          "5": "25R",
+          "6": "25L",
+          "7": "42R",
+          "8": "43L",
+          "9": "34R",
+          "10": "35R",
+          "11": "31R",
+          "12": "NOT_LOADED"
+        },
+        ACO: {
+          "1": "NOT_LOADED",
+          "2": "NOT_LOADED",
+          "3": "11L",
+          "4": "NOT_LOADED",
+          "5": "23L",
+          "6": "34R",
+          "7": "NOT_LOADED",
+          "8": "NOT_LOADED",
+          "9": "NOT_LOADED",
+          "10": "NOT_LOADED",
+          "11": "NOT_LOADED",
+          "12": "NOT_LOADED"
+        },
+        ABC: {
+          "1": "23P",
+          "2": "12R",
+          "3": "41L",
+          "4": "27R",
+          "5": "44L",
+          "6": "13R",
+          "7": "33L",
+          "8": "32R",
+          "9": "41R",
+          "11": "28L",
+          "12": "NOT_LOADED"
+        },
+        MBO: {
+          "1": "21P",
+          "2": "23L",
+          "3": "44R",
+          "4": "43L",
+          "5": "34R",
+          "6": "35L",
+          "7": "13L",
+          "8": "41L",
+          "9": "12R",
+          "10": "35R",
+          "11": "14L",
+          "12": "NOT_LOADED"
+        }
+      },
+      4: {
+        MILP: {
+          "1": "NOT_LOADED",
+          "2": "44L",
+          "3": "44R",
+          "4": "43L",
+          "5": "43R",
+          "6": "42L",
+          "7": "42R",
+          "8": "41R",
+          "9": "41L",
+          "10": "36R",
+          "11": "36L",
+          "12": "35L",
+          "13": "35R",
+          "14": "34L",
+          "15": "34R",
+          "16": "33L",
+          "17": "33R",
+          "18": "32L",
+          "19": "28R",
+          "20": "27L",
+          "21": "24R",
+          "22": "23L",
+          "23": "23R",
+          "24": "21L",
+          "25": "22R",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "32R",
+          "29": "25R",
+          "30": "25L",
+          "31": "26R",
+          "32": "26L",
+          "33": "27R",
+          "34": "24L",
+          "35": "31R",
+          "36": "31L",
+          "37": "NOT_LOADED",
+          "38": "28L"
+        },
+        MINLP: {
+          "1": "NOT_LOADED",
+          "2": "44L",
+          "3": "44R",
+          "4": "43L",
+          "5": "43R",
+          "6": "42L",
+          "7": "42R",
+          "8": "41R",
+          "9": "41L",
+          "10": "36R",
+          "11": "36L",
+          "12": "35L",
+          "13": "35R",
+          "14": "34L",
+          "15": "34R",
+          "16": "33L",
+          "17": "33R",
+          "18": "32L",
+          "19": "28R",
+          "20": "27L",
+          "21": "24R",
+          "22": "23L",
+          "23": "23R",
+          "24": "21L",
+          "25": "22R",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "32R",
+          "29": "25R",
+          "30": "25L",
+          "31": "26R",
+          "32": "26L",
+          "33": "27R",
+          "34": "24L",
+          "35": "31R",
+          "36": "31L",
+          "37": "NOT_LOADED",
+          "38": "28L"
+        },
+        QP: {
+          "1": "NOT_LOADED",
+          "2": "35L",
+          "3": "35R",
+          "4": "34L",
+          "5": "34R",
+          "6": "33L",
+          "7": "33R",
+          "8": "32L",
+          "9": "32R",
+          "10": "31L",
+          "11": "31R",
+          "12": "28L",
+          "13": "28R",
+          "14": "27L",
+          "15": "27R",
+          "16": "26L",
+          "17": "26R",
+          "18": "25L",
+          "19": "25R",
+          "20": "24L",
+          "21": "24R",
+          "22": "23L",
+          "23": "23R",
+          "24": "22L",
+          "25": "22R",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "44L",
+          "29": "44R",
+          "30": "43L",
+          "31": "43R",
+          "32": "42L",
+          "33": "42R",
+          "34": "41R",
+          "35": "36L",
+          "36": "36R",
+          "37": "NOT_LOADED",
+          "38": "41L"
+        },
+        DP: {
+          "1": "NOT_LOADED",
+          "2": "44L",
+          "3": "44R",
+          "4": "43L",
+          "5": "43R",
+          "6": "42L",
+          "7": "42R",
+          "8": "41L",
+          "9": "41R",
+          "10": "36L",
+          "11": "36R",
+          "12": "35L",
+          "13": "35R",
+          "14": "34L",
+          "15": "34R",
+          "16": "33L",
+          "17": "33R",
+          "18": "32L",
+          "19": "32R",
+          "20": "31L",
+          "21": "31R",
+          "22": "28L",
+          "23": "28R",
+          "24": "27L",
+          "25": "27R",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "25R",
+          "29": "24L",
+          "30": "24R",
+          "31": "23L",
+          "32": "23R",
+          "33": "22L",
+          "34": "26L",
+          "35": "26R",
+          "36": "25L",
+          "37": "NOT_LOADED",
+          "38": "22R"
+        },
+        CP: {
+          "1": "NOT_LOADED",
+          "2": "44L",
+          "3": "44R",
+          "4": "43L",
+          "5": "43R",
+          "6": "42L",
+          "7": "42R",
+          "8": "41L",
+          "9": "41R",
+          "10": "36L",
+          "11": "36R",
+          "12": "35L",
+          "13": "35R",
+          "14": "34L",
+          "15": "34R",
+          "16": "33L",
+          "17": "33R",
+          "18": "32L",
+          "19": "32R",
+          "20": "31L",
+          "21": "31R",
+          "22": "28L",
+          "23": "28R",
+          "24": "27L",
+          "25": "27R",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "26L",
+          "29": "26R",
+          "30": "25L",
+          "31": "25R",
+          "32": "24L",
+          "33": "24R",
+          "34": "23L",
+          "35": "23R",
+          "36": "22L",
+          "37": "NOT_LOADED",
+          "38": "22R"
+        },
+        GA: {
+          "1": "NOT_LOADED",
+          "2": "31L",
+          "3": "13L",
+          "4": "35R",
+          "5": "42R",
+          "6": "NOT_LOADED",
+          "7": "11L",
+          "8": "NOT_LOADED",
+          "9": "NOT_LOADED",
+          "10": "NOT_LOADED",
+          "11": "NOT_LOADED",
+          "12": "21R",
+          "13": "13R",
+          "14": "27R",
+          "15": "NOT_LOADED",
+          "16": "NOT_LOADED",
+          "17": "33R",
+          "18": "43L",
+          "19": "NOT_LOADED",
+          "20": "28L",
+          "21": "NOT_LOADED",
+          "22": "23L",
+          "23": "32R",
+          "24": "NOT_LOADED",
+          "25": "NOT_LOADED",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "34L",
+          "29": "41L",
+          "30": "14L",
+          "31": "23R",
+          "32": "12L",
+          "33": "21L",
+          "34": "42L",
+          "35": "22L",
+          "36": "33L",
+          "37": "NOT_LOADED",
+          "38": "44R"
+        },
+        PSO: {
+          "1": "NOT_LOADED",
+          "2": "NOT_LOADED",
+          "3": "11R",
+          "4": "NOT_LOADED",
+          "5": "NOT_LOADED",
+          "6": "NOT_LOADED",
+          "7": "13R",
+          "8": "27L",
+          "9": "NOT_LOADED",
+          "10": "NOT_LOADED",
+          "11": "24L",
+          "12": "21L",
+          "13": "28L",
+          "14": "42L",
+          "15": "NOT_LOADED",
+          "16": "NOT_LOADED",
+          "17": "NOT_LOADED",
+          "18": "11L",
+          "19": "NOT_LOADED",
+          "20": "23L",
+          "21": "NOT_LOADED",
+          "22": "NOT_LOADED",
+          "23": "NOT_LOADED",
+          "24": "NOT_LOADED",
+          "25": "NOT_LOADED",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "25L",
+          "29": "35L",
+          "30": "41R",
+          "31": "NOT_LOADED",
+          "32": "26L",
+          "33": "26R",
+          "34": "33L",
+          "35": "34L",
+          "36": "NOT_LOADED",
+          "37": "NOT_LOADED",
+          "38": "12R"
+        },
+        CS: {
+          "1": "NOT_LOADED",
+          "2": "34L",
+          "3": "23R",
+          "4": "22R",
+          "5": "25L",
+          "6": "26L",
+          "7": "NOT_LOADED",
+          "8": "42L",
+          "9": "28L",
+          "10": "21L",
+          "11": "NOT_LOADED",
+          "12": "24R",
+          "13": "44L",
+          "14": "43R",
+          "15": "NOT_LOADED",
+          "16": "21R",
+          "17": "NOT_LOADED",
+          "18": "42R",
+          "19": "27R",
+          "20": "26R",
+          "21": "NOT_LOADED",
+          "22": "NOT_LOADED",
+          "23": "NOT_LOADED",
+          "24": "NOT_LOADED",
+          "25": "27L",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "34R",
+          "29": "25R",
+          "30": "13R",
+          "31": "24L",
+          "32": "NOT_LOADED",
+          "33": "31L",
+          "34": "32R",
+          "35": "11L",
+          "36": "41L",
+          "37": "NOT_LOADED",
+          "38": "36R"
+        },
+        ACO: {
+          "1": "NOT_LOADED",
+          "2": "NOT_LOADED",
+          "3": "32R",
+          "4": "NOT_LOADED",
+          "5": "25R",
+          "6": "NOT_LOADED",
+          "7": "14L",
+          "8": "NOT_LOADED",
+          "9": "NOT_LOADED",
+          "10": "24R",
+          "11": "NOT_LOADED",
+          "12": "33L",
+          "13": "22L",
+          "14": "34L",
+          "15": "NOT_LOADED",
+          "16": "28R",
+          "17": "NOT_LOADED",
+          "18": "NOT_LOADED",
+          "19": "NOT_LOADED",
+          "20": "28L",
+          "21": "44L",
+          "22": "36L",
+          "23": "21L",
+          "24": "NOT_LOADED",
+          "25": "NOT_LOADED",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "NOT_LOADED",
+          "29": "11L",
+          "30": "NOT_LOADED",
+          "31": "NOT_LOADED",
+          "32": "36R",
+          "33": "NOT_LOADED",
+          "34": "NOT_LOADED",
+          "35": "23R",
+          "36": "NOT_LOADED",
+          "37": "NOT_LOADED",
+          "38": "NOT_LOADED"
+        },
+        ABC: {
+          "1": "NOT_LOADED",
+          "2": "41L",
+          "3": "35R",
+          "4": "NOT_LOADED",
+          "5": "NOT_LOADED",
+          "6": "11L",
+          "7": "26R",
+          "8": "12R",
+          "9": "NOT_LOADED",
+          "10": "NOT_LOADED",
+          "11": "NOT_LOADED",
+          "12": "32L",
+          "13": "28R",
+          "14": "NOT_LOADED",
+          "15": "26L",
+          "16": "14R",
+          "17": "27R",
+          "18": "21L",
+          "19": "NOT_LOADED",
+          "20": "12L",
+          "21": "21R",
+          "22": "NOT_LOADED",
+          "23": "NOT_LOADED",
+          "24": "NOT_LOADED",
+          "25": "NOT_LOADED",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "34R",
+          "29": "36R",
+          "30": "31L",
+          "31": "11R",
+          "32": "14L",
+          "33": "42L",
+          "34": "31R",
+          "35": "24R",
+          "36": "24L",
+          "37": "NOT_LOADED",
+          "38": "36L"
+        },
+        MBO: {
+          "1": "NOT_LOADED",
+          "2": "23R",
+          "3": "13L",
+          "4": "31L",
+          "5": "26R",
+          "6": "22L",
+          "7": "26L",
+          "8": "21L",
+          "9": "28R",
+          "10": "21R",
+          "11": "41L",
+          "12": "13R",
+          "13": "41R",
+          "14": "NOT_LOADED",
+          "15": "35L",
+          "16": "25R",
+          "17": "33L",
+          "18": "NOT_LOADED",
+          "19": "33R",
+          "20": "42R",
+          "21": "23L",
+          "22": "22R",
+          "23": "25L",
+          "24": "11L",
+          "25": "32R",
+          "26": "NOT_LOADED",
+          "27": "NOT_LOADED",
+          "28": "34L",
+          "29": "24R",
+          "30": "36L",
+          "31": "44L",
+          "32": "27R",
+          "33": "34R",
+          "34": "27L",
+          "35": "11R",
+          "36": "44R",
+          "37": "NOT_LOADED",
+          "38": "12R"
+        }
+      },
+      5: {
+        MILP: {
+          "1": "13P",
+          "2": "21P",
+          "3": "NOT_LOADED",
+          "4": "11L",
+          "5": "11R",
+          "6": "12L",
+          "7": "35L",
+          "8": "41L",
+          "9": "44L",
+          "10": "44R",
+          "11": "43L",
+          "12": "43R",
+          "13": "42R",
+          "14": "42L",
+          "15": "41R",
+          "16": "NOT_LOADED"
+        },
+        MINLP: {
+          "1": "13P",
+          "2": "21P",
+          "3": "NOT_LOADED",
+          "4": "11L",
+          "5": "11R",
+          "6": "12L",
+          "7": "35L",
+          "8": "41L",
+          "9": "44L",
+          "10": "44R",
+          "11": "43L",
+          "12": "43R",
+          "13": "42R",
+          "14": "42L",
+          "15": "41R",
+          "16": "NOT_LOADED"
+        },
+        QP: {
+          "1": "42P",
+          "2": "25P",
+          "3": "NOT_LOADED",
+          "4": "44L",
+          "5": "44R",
+          "6": "43L",
+          "7": "43R",
+          "8": "42L",
+          "9": "42R",
+          "10": "41L",
+          "11": "41R",
+          "12": "36L",
+          "13": "36R",
+          "14": "35L",
+          "15": "35R",
+          "16": "NOT_LOADED"
+        },
+        DP: {
+          "1": "25P",
+          "2": "42P",
+          "3": "NOT_LOADED",
+          "8": "35R",
+          "13": "42L",
+          "14": "42R",
+          "15": "41L",
+          "16": "NOT_LOADED"
+        },
+        CP: {
+          "1": "42P",
+          "2": "25P",
+          "3": "NOT_LOADED",
+          "8": "42L",
+          "9": "42R",
+          "10": "41L",
+          "12": "36L",
+          "13": "36R",
+          "14": "35L",
+          "15": "35R",
+          "16": "NOT_LOADED"
+        },
+        GA: {
+          "1": "22P",
+          "2": "23P",
+          "3": "NOT_LOADED",
+          "4": "43R",
+          "5": "41L",
+          "6": "NOT_LOADED",
+          "7": "NOT_LOADED",
+          "8": "42L",
+          "9": "NOT_LOADED",
+          "10": "44R",
+          "12": "NOT_LOADED",
+          "13": "27R",
+          "14": "NOT_LOADED",
+          "15": "NOT_LOADED",
+          "16": "NOT_LOADED"
+        },
+        PSO: {
+          "1": "24P",
+          "2": "23P",
+          "3": "NOT_LOADED",
+          "4": "36R",
+          "5": "32L",
+          "6": "34R",
+          "7": "14L",
+          "8": "44R",
+          "9": "NOT_LOADED",
+          "11": "34L",
+          "12": "44L",
+          "13": "23L",
+          "14": "NOT_LOADED",
+          "15": "NOT_LOADED",
+          "16": "NOT_LOADED"
+        },
+        CS: {
+          "1": "25P",
+          "2": "42P",
+          "3": "NOT_LOADED",
+          "4": "14R",
+          "5": "13L",
+          "7": "26R",
+          "8": "41R",
+          "9": "22L",
+          "10": "13R",
+          "11": "NOT_LOADED",
+          "12": "25R",
+          "13": "31L",
+          "15": "34R",
+          "16": "NOT_LOADED"
+        },
+        ACO: {
+          "1": "NOT_LOADED",
+          "2": "NOT_LOADED",
+          "3": "NOT_LOADED",
+          "4": "NOT_LOADED",
+          "5": "NOT_LOADED",
+          "6": "NOT_LOADED",
+          "7": "22L",
+          "8": "NOT_LOADED",
+          "9": "NOT_LOADED",
+          "10": "26R",
+          "11": "NOT_LOADED",
+          "12": "NOT_LOADED",
+          "13": "NOT_LOADED",
+          "14": "NOT_LOADED",
+          "15": "NOT_LOADED",
+          "16": "NOT_LOADED"
+        },
+        ABC: {
+          "1": "42P",
+          "2": "13P",
+          "3": "NOT_LOADED",
+          "4": "42L",
+          "6": "33R",
+          "7": "42R",
+          "8": "22L",
+          "9": "NOT_LOADED",
+          "10": "23R",
+          "11": "NOT_LOADED",
+          "13": "25L",
+          "14": "33L",
+          "15": "11L",
+          "16": "NOT_LOADED"
+        },
+        MBO: {
+          "1": "24P",
+          "2": "42P",
+          "3": "NOT_LOADED",
+          "5": "42L",
+          "6": "22R",
+          "7": "35L",
+          "8": "21L",
+          "11": "28R",
+          "12": "12R",
+          "13": "NOT_LOADED",
+          "14": "33R",
+          "15": "32R",
+          "16": "NOT_LOADED"
+        }
+      }
+    };
+
+    // ========== 第二步：工具函数（依赖静态数据，被业务函数调用） ==========
+    /**
+     * 根据机型和舱位ID获取舱位相关的四个参数
+     * @param {string} model - 机型（如 "B747"、"A330"）
+     * @param {string} positionId - 舱位ID（如 "11P"、"12L"）
+     * @returns {object} 包含四个参数的对象
+     * @returns {number} return.top - 舱位顶部位置百分比
+     * @returns {number} return.left - 舱位左侧位置百分比
+     * @returns {number} return.width - 舱位宽度百分比
+     * @returns {number} return.height - 舱位高度百分比
+     */
+    function getPosParams(model, positionId) {
+      if (!Object.keys(subPosMap[model] || {}).includes(positionId)) {
+        return cargoLayoutData[model][positionId];
+      } else {
+        let object = {
+          top: Infinity,
+          left: Infinity,
+          width: -Infinity,
+          height: -Infinity
+        }
+
+        let avg_width = 0;
+
+        subPosMap[model][positionId].forEach(subPosId => {
+          const subPosLayout = cargoLayoutData[model][subPosId];
+          if (object.top > subPosLayout.top) {
+            object.top = subPosLayout.top;
+          }
+          if (object.left > subPosLayout.left) {
+            object.left = subPosLayout.left;
+          }
+          if (object.height < subPosLayout.top + subPosLayout.height) {
+            object.height = subPosLayout.top + subPosLayout.height;
+          }
+          if (object.width < subPosLayout.left + subPosLayout.width) {
+            object.width = subPosLayout.left + subPosLayout.width;
+          }
+          avg_width += subPosLayout.width;
+        })
+        object.height = object.height - object.top;
+        object.width = object.width - object.left;
+
+        const subPosCount = subPosMap[model][positionId].length;
+        avg_width = avg_width / subPosCount;
+
+        // P型舱位，边缘部分可以重叠
+        if (positionId.endsWith('P')) {
+          object.left += avg_width / 2;
+          object.width -= avg_width;
+          object.width -= 0.2;
+        }
+
+        return object;
+      }
+    }
+
+    // ========== 第三步：业务函数（依赖工具函数/静态数据，实现核心功能） ==========
+    // Add cargo data of the corresponding case to the table
+    function renderCaseTable(caseNum) {
+      const tableBody = document.getElementById('caseTableBody');
+      // Clear existing content
+      tableBody.innerHTML = '';
+      // Get data of the corresponding case
+      const data = caseData[caseNum];
+      // Traverse data to generate table rows
+      data.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+                  <td>${item.ID}</td>
+                  <td>${item.Uld}</td>
+                  <td>${item.Type}</td>
+                  <td>${item.Weight}</td>
+                  <td>${item.Volume}</td>
+                  <td>${item.Destination}</td>
+                  <td>${item.SpecialCode}</td>
+                  <td>${item.Priority}</td>
+              `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    // Add cabin image of the corresponding case
+    function renderCabinImage(caseNum) {
+      const cabinImage = document.getElementById('cabinImage');
+      cabinImage.src = cabinImageData[caseNum] + ".png"; // Get image URL from JS data
+      cabinImage.alt = `Case ${caseNum} Cabin Data Chart`; // Optimize alt attribute for accessibility
+    }
+
+    /**
+     * 生成指定案例+算法的货箱DOM字符串
+     * @param {number} caseNum - 案例号（1~5）
+     * @param {string} algoName - 算法名（MILP/MINLP/QP/DP/CP/GA/PSO/CS/ACO/ABC/MBO）
+     * @param {string} model - 机型（B777 A320）
+     * @returns  
+     */
+    function generateCargoBoxDOM(caseNum, algoName, model) {
+      // ========== 1. 常量定义 ==========
+      // 货物类型与货箱颜色类的映射
+      const ULD_COLOR_MAP = {
+        red: ["AAP", "AMP", "P6P", "P1P"],
+        blue: ["PLA", "ALF"],
+        green: ["LD3", "LD2"]
+      };
+      // 合法参数校验
+      const VALID_CASES = [1, 2, 3, 4, 5];
+      const VALID_ALGOS = ["MILP", "MINLP", "QP", "DP", "CP", "GA", "PSO", "CS", "ACO", "ABC", "MBO"];
+
+      // ========== 2. 参数校验 ==========
+      if (!VALID_CASES.includes(caseNum)) {
+        console.error(`案例号${caseNum}无效，仅支持1~5`);
+        return "";
+      }
+      if (!VALID_ALGOS.includes(algoName)) {
+        console.error(`算法名${algoName}无效，仅支持：${VALID_ALGOS.join("/")}`);
+        return "";
+      }
+      // 校验机型布局数据是否存在
+      if (!cargoLayoutData[model]) {
+        console.error(`机型${model}的布局数据不存在`);
+        return "";
+      }
+
+      // ========== 3. 核心数据匹配 ==========
+      // 3.1 获取当前案例+算法的装载方案
+      const loadingScheme = loadingSchemeData[caseNum]?.[algoName];
+      if (!loadingScheme || Object.keys(loadingScheme).length === 0) {
+        console.warn(`案例${caseNum} ${algoName}算法暂无装载方案`);
+        return "";
+      }
+      // 3.2 获取当前案例的货物静态数据
+      const currentCaseGoods = caseData[caseNum];
+      if (!currentCaseGoods || currentCaseGoods.length === 0) {
+        console.warn(`案例${caseNum}暂无货物静态数据`);
+        return "";
+      }
+      // 把货物数据转成ID映射（方便快速查询）
+      const goodsMap = currentCaseGoods.reduce((map, goods) => {
+        map[goods.ID] = goods;
+        return map;
+      }, {});
+
+      // ========== 4. 生成DOM字符串 ==========
+      let domStr = "";
+      // 遍历装载方案的每一对 货物ID-舱位ID
+      Object.entries(loadingScheme).forEach(([cargoId, positionId]) => {
+        const cargoIdNum = Number(cargoId);
+        // 4.1 校验货物ID是否存在
+        if (!goodsMap[cargoIdNum]) {
+          console.warn(`案例${caseNum}中未找到货物ID: ${cargoId}的静态数据`);
+          return;
+        }
+        // 4.2 获得校验舱位布局参数
+        const isCombinedPos = Object.keys(subPosMap[model] || {}).includes(positionId);
+        // 非组合舱位时，校验基础舱位数据是否存在
+        if (!isCombinedPos && !cargoLayoutData[model]?.[positionId]) {
+          console.warn(`机型${model}中未找到舱位ID: ${positionId}的布局数据，跳过该货物ID: ${cargoId}`);
+          return; // 跳过当前货物的DOM生成
+        }
+        const posParams = getPosParams(model, positionId);
+
+        // 4.3 匹配货箱颜色类
+        const goodsUld = goodsMap[cargoIdNum].Uld;
+        let colorClass = "cargo-box-red"; // 默认红色
+        if (ULD_COLOR_MAP.blue.includes(goodsUld)) {
+          colorClass = "cargo-box-blue";
+        } else if (ULD_COLOR_MAP.green.includes(goodsUld)) {
+          colorClass = "cargo-box-green";
+        }
+        // 4.4 拼接DOM字符串
+        domStr += `
+              <div class="cargo-box ${colorClass}" data-position="${positionId}" style="top: ${posParams.top}%; left: ${posParams.left}%; width: ${posParams.width}%; height: ${posParams.height}%;">
+                <span class="cargo-text" style="font-size: 20px">${cargoId}</span>
+              </div>
+            `;
+
+      });
+
+      domStr = domStr.trim(); // 去除首尾空白符
+
+      const container = document.getElementById("cargoBoxContainer");
+      container.innerHTML = domStr;
+
+      return;
+    }
+
+    // Display loading plan
+    function showResultCard(imageUrl) {
+      // 1. Get card element
+      const resultCard = document.getElementById('resultCard');
+      const resultImage = document.getElementById('resultImage');
+
+      // 2. Set image URL (required)
+      resultImage.src = imageUrl;
+      // Optional: Set image description
+      resultImage.alt = "Loading Plan Result Chart";
+
+      // visualize loading solution
+      // 关键：通过dataset获取自定义属性值（自动转小写，data-case-number → dataset.caseNumber）
+      const caseNumber = parseInt(document.querySelector('[data-case-number].active').dataset.caseNumber);
+      const algoName = document.getElementById('algorithmSelect').value;
+      generateCargoBoxDOM(caseNumber, algoName, "B777");
+      // generateCargoBoxDOM(1, "MILP", "B777");
+
+      // 3. Display card (remove hidden class)
+      resultCard.classList.remove('d-none');
+    }
+
+    // Hide loading plan
+    function hideResultCard() {
+      const resultCard = document.getElementById('resultCard');
+      resultCard.classList.add('d-none');
+      // Clear image URL (optional)
+      document.getElementById('resultImage').src = "";
+    }
+
+    // ========== 第四步：初始化/事件绑定（执行时机最晚，依赖DOM加载完成） ==========
+    // Chart Initialization
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1. CG Deviation Rate Chart Configuration
+      const cgGapCtx = document.getElementById('cgGapChart').getContext('2d');
+      new Chart(cgGapCtx, {
+        type: 'bar',
+        data: {
+          labels: ['MILP', 'QP', 'GA ', 'ABC'],
+          datasets: [
+            {
+              label: 'A320 (Narrow-body) CG Deviation Rate (%)',
+              data: [44.66, 38.58, 0.2, 0.2],
+              backgroundColor: 'rgba(102, 126, 234, 0.7)',
+              borderColor: 'rgba(102, 126, 234, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'B777 (Wide-body) CG Deviation Rate (%)',
+              data: [8.00, 7.86, 0.1, 0.1],
+              backgroundColor: 'rgba(118, 75, 162, 0.7)',
+              borderColor: 'rgba(118, 75, 162, 1)',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Comparison of CG Deviation Rates for Different Algorithms'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              // beginAtZero: false,
+              // min: -1,
+              // max: 45,
+              // baseline: -1,
+              title: {
+                display: true,
+                text: 'CG Deviation Rate (%)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Algorithm Type'
+              }
+            }
+          }
+        }
+      });
+
+      // 2. Average Computation Time Chart Configuration
+      const computeTimeCtx = document.getElementById('computeTimeChart').getContext('2d');
+      new Chart(computeTimeCtx, {
+        type: 'bar',
+        data: {
+          labels: ['MILP', 'QP', 'GA', 'ABC'],
+          datasets: [{
+            label: 'Average Computation Time (s)',
+            data: [3.57, 0.11, 29.82, 30.05],
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(255, 159, 64, 0.7)',
+              'rgba(255, 99, 132, 0.7)'
+            ],
+            borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Comparison of Average Computation Time for Different Algorithms'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Average Computation Time (s)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Algorithm Type'
+              }
+            }
+          }
+        }
+      });
+
+      // 3. CG Optimization Effect Chart (Data 1, labeled for large aircraft models)
+      const cgCtx = document.getElementById('cgOptimizeChart').getContext('2d');
+      new Chart(cgCtx, {
+        type: 'line',
+        data: {
+          labels: ['0% MAC', '0.5% MAC', '1% MAC', '1.5% MAC'],
+          datasets: [
+            {
+              label: 'Trim Drag (%)',
+              data: [100, 105, 110, 115],
+              borderColor: '#667eea',
+              backgroundColor: 'rgba(102, 126, 234, 0.1)',
+              tension: 0.3,
+              fill: true
+            },
+            {
+              label: 'Fuel Consumption (%)',
+              data: [100, 101.5, 103, 104.5],
+              borderColor: '#764ba2',
+              backgroundColor: 'rgba(118, 75, 162, 0.1)',
+              tension: 0.3,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Large Aircraft - Relationship between CG Deviation and Fuel Consumption/Drag',
+              font: { size: 12 },
+              padding: { bottom: 10 }
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return `${context.dataset.label}: ${context.parsed.y}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              title: { display: true, text: 'Relative Value (%)' },
+              min: 95,
+              ticks: { precision: 0 }
+            },
+            x: {
+              title: { display: true, text: 'CG Deviation (MAC)' }
+            }
+          }
+        }
+      });
+
+      // 4. Original Weight Tiered Pricing Chart
+      const priceCtx = document.getElementById('priceTierChart').getContext('2d');
+      new Chart(priceCtx, {
+        type: 'line',
+        data: {
+          labels: ['44kg', '99kg', '299kg', '499kg', '999kg', '1000kg+'],
+          datasets: [{
+            label: 'Unit Price (USD/kg)',
+            data: [12.66, 9.74, 9.07, 7.16, 6.27, 5.44],
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'TPE–DFW Route Weight Tiered Pricing',
+              font: { size: 12 },
+              padding: { bottom: 10 }
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return `Unit Price: ${context.parsed.y} USD/kg`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              title: { display: true, text: 'Unit Price (USD/kg)' },
+              min: 5,
+              ticks: { precision: 2 }
+            },
+            x: {
+              title: { display: true, text: 'Cargo Weight' }
+            }
+          }
+        }
+      });
+    });
+
+    // Initialization: Render cargo data of Case 1 by default
+    renderCaseTable(1);
+    renderCabinImage(1);
+
+    // Button click event: Switch case + render corresponding data
+    const caseButtons = document.querySelectorAll('[id^="caseBtn"]');
+    caseButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        // Switch button active state
+        caseButtons.forEach(btn => {
+          btn.classList.remove('active', 'btn-primary');
+          btn.classList.add('btn-outline-primary');
+        });
+        this.classList.add('active', 'btn-primary');
+        this.classList.remove('btn-outline-primary');
+
+        // Get case number and render data
+        const caseNum = this.id.replace('caseBtn', '');
+        renderCaseTable(caseNum);
+        renderCabinImage(caseNum);
+      });
+    });
+
+    // Get core elements
+    const algorithmSelect = document.getElementById('algorithmSelect');
+    const generateBtn = document.getElementById('generateBtn');
+    const selectFeedback = document.getElementById('selectFeedback');
+
+    // Button click event
+    generateBtn.addEventListener('click', function () {
+      // 1. Get selected algorithm value
+      const selectedAlgo = algorithmSelect.value;
+
+      // 2. Verify if algorithm is selected
+      if (!selectedAlgo) {
+        selectFeedback.classList.remove('d-none'); // Show prompt
+        return; // Terminate subsequent logic
+      }
+
+      // 3. Valid selection: Hide prompt
+      selectFeedback.classList.add('d-none');
+
+      // 4. Button state interaction
+      const originalText = generateBtn.innerText; // Save original text
+      generateBtn.disabled = true; // Disable button to prevent duplicate clicks
+      generateBtn.innerText = 'Generated Successfully ✔'; // Show success prompt
+      generateBtn.classList.remove('btn-primary'); // Remove original blue style
+      generateBtn.classList.add('btn-success');    // Add green success style
+
+      // 5. Generate loading plan (can be replaced with actual business logic)
+      showResultCard("B777.png");
+      // Add actual loading plan generation logic here
+
+      // 6. Restore button to original state (after 1.5 seconds)
+      setTimeout(() => {
+        generateBtn.innerText = originalText;
+        generateBtn.disabled = false;
+        generateBtn.classList.remove('btn-success'); // Remove green style
+        generateBtn.classList.add('btn-primary');    // Restore blue style
+      }, 1500);
+    });
+
+    // Automatically hide prompt when selecting algorithm
+    algorithmSelect.addEventListener('change', function () {
+      if (this.value) {
+        selectFeedback.classList.add('d-none');
+      }
+    });
+
+    // temp
+    // showResultCard("B777.png");
+  </script>
+
+</body>
+
+</html>
