@@ -11,6 +11,13 @@
 </map>
 
 
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><a href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart"><img src="左图链接" /></a></td>
+    <td><a href="https://github.com/LINC-BIT/AirCa/archive/refs/heads/main.zip"><img src="右图链接" /></a></td>
+  </tr>
+</table>
+
 <div align="center">
 
 **AirCa website**  https://linc-bit.github.io/AirCa/html-page/index.html
