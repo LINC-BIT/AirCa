@@ -5,14 +5,13 @@
 
 
 <div align="center">
-  <a href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart">
+<a href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart">
     <img src="quick start.png" alt="Quick Start" height="38">
-  </a>
-  
+</a>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/LINC-BIT/AirCa">
+<a href="https://github.com/LINC-BIT/AirCa">
     <img src="view source code.png" alt="View Source Code" height="38">
-  </a>
+</a>
 </div>
 
 
