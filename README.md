@@ -1,25 +1,20 @@
 
-<a href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart">
+<a href="https://linc-bit.github.io/AirCa/html-page/index.html">
 <img width="1415" height="385" alt="1" src="https://github.com/user-attachments/assets/1dde8fd2-a52c-445d-91bb-dc4a3cafa112" />
 </a>
 
 
 <div align="center">
   <a href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart">
-    <img src="" alt="Quick Start" height="38">
+    <img src="quick start.png" alt="Quick Start" height="38">
   </a>
+  
   &nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://github.com/LINC-BIT/AirCa">
-    <img src="" alt="View Source Code" height="38">
+    <img src="view source code.png" alt="View Source Code" height="38">
   </a>
 </div>
 
-
-<div align="center">
-
-**AirCa website**  https://linc-bit.github.io/AirCa/html-page/index.html
-
-</div>
 
 <div align="center">
 
