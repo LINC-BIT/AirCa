@@ -5,12 +5,12 @@
 
 
 <div align="center">
-<a href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart">
-    <img src="quick start.png" alt="Quick Start" height="38">
+<a href="https://linc-bit.github.io/AirCa/html-page/index.html#quickstart" style="text-decoration:none; outline:none;">
+    <img src="quick start.png" alt="Quick Start" height="38" style="border:0;">
 </a>
   &nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://github.com/LINC-BIT/AirCa">
-    <img src="view source code.png" alt="View Source Code" height="38">
+<a href="https://github.com/LINC-BIT/AirCa" style="text-decoration:none; outline:none;">
+    <img src="view source code.png" alt="View Source Code" height="38" style="border:0;">
 </a>
 </div>
 
