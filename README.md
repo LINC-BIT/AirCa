@@ -9,7 +9,7 @@
     <img src="quick start.png" alt="Quick Start" height="38" style="border:0;">
 </a>
   &nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://github.com/LINC-BIT/AirCa" style="text-decoration:none; outline:none;">
+<a href="https://github.com/LINC-BIT/AirCa/tree/main/code" style="text-decoration:none; outline:none;">
     <img src="view source code.png" alt="View Source Code" height="38" style="border:0;">
 </a>
 </div>
