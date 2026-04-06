@@ -23,12 +23,12 @@
 
 
 # AirCa Demo
-Users can select from 5 preset loading inistances, choose an optimization algorithm, and generate a loading plan with one click. Results are visualized directly on a 3D aircraft hold layout (Gif below).
+Users can select from 6 preset experiments, choose an optimization algorithm, and generate a loading plan with one click. Results are visualized directly on a 3D aircraft hold layout (Gif below).
 
 
 <div align="center">
  
-![demo-product](https://github.com/user-attachments/assets/d50a37e0-2f20-4373-a57a-a90e603dfc26)
+![alt text](<AirCa demo-1.gif>)
 
 </div>
 
@@ -159,12 +159,78 @@ pip install -r requirements.txt
 python data_preprocess.py --input-path /data/raw/ --output-path /data/processed/
 ```
 
+### Evaluation metrics
+The experimental results in Section 4 mainly report CG-related gap, and algorithm runtime.
+
+**CG (center of gravity):** In the weight-and-balance setting, the aircraft CG is represented by the balance arm, denoted by $BA$, which is the horizontal distance from the reference datum to the location of the aircraft center of gravity. In the index-based formulation used by practice, the CG position is related to the aircraft by
+
+$$
+CG = \frac{W \cdot (BA - RA)}{C} + K,
+$$
+where $W$ is the actual aircraft weight, $BA$ is the horizontal distance from the reference datum to the CG location, $RA$ is the reference arm, $C$ is the aircraft weight constant, and $K$ is a constant introduced to avoid negative index values.
+
+**CG gap:** The CG gap is computed as the absolute deviation normalized by the optimal value:
+$$
+\text{Gap}(\%) = \frac{|CG_{actual} - CG_{opt}|}{|CG_{opt}|} \times 100
+$$
+
+
+
+**Algorithm runtime:** Algorithm runtime refers to the wall-clock execution time of each baseline from the start of optimization to termination under the prescribed time limit.
+
 
 
 ## 4.1 Multi-constraint cargo loading
 
 This workload evaluates air cargo loading algorithms under **incrementally modeling complexity sets**.  
 It supports **A320 (narrow-body, bulk hold)** and **B777 (wide-body, ULD hold)**, and reports performance across multiple constraint levels.
+
+#### Modeling and solver notes
+All experiments in this subsection use an assignment-based optimization model. Let $I$ be the set of cargo items and $H$ the set of cargo holds. The binary decision variable
+
+$$
+x_{ih} =
+\begin{cases}
+1, & \text{if cargo item } i \text{ is assigned to hold } h, \\
+0, & \text{otherwise}.
+\end{cases}
+$$
+
+The total loaded weight and longitudinal CG surrogate are computed as
+
+$$
+W = W_0 + \sum_{i \in I}\sum_{h \in H} w_i x_{ih},
+\qquad
+CG = CG_0 + \sum_{i \in I}\sum_{h \in H} w_i a_h x_{ih},
+$$
+
+where $W_0$ and $CG_0$ are the aircraft initial zero-fuel quantities loaded from the aircraft profile, $w_i$ is the cargo weight, and $a_h$ is the hold CG coefficient. The CG envelope is interpolated from `stdZfw_a.csv` and `stdZfw_f.csv`, and the target CG used by the code is
+
+$$
+CG^\star(W) = CG^{aft}(W) + \frac{CG^{fwd}(W) - CG^{aft}(W)}{3}.
+$$
+
+The common single-segment objective is
+
+$$
+\min \; |CG - CG^\star(W)|.
+$$
+
+The main constraints are
+
+$$
+\sum_{h \in H} x_{ih} \le 1, \qquad \forall i \in I,
+$$
+
+$$
+\sum_{i \in I} w_i x_{ih} \le \bar W_h, \qquad \forall h \in H,
+$$
+
+$$
+CG^{aft}(W) \le CG \le CG^{fwd}(W),
+$$
+
+plus experiment-specific operational constraints such as ULD-type compatibility, exclusive holds, continuous loading, loading order, and dangerous-goods isolation. The released baselines are implemented in `algorithm/for_narrow/` and `algorithm/for_wide/` and are executed with a unified time limit through the Python scripts below. In the codebase, `MILP`, `MINLP`, and `QP` are custom mathematical-programming-style baselines, while `DP`, `CP`, `GA`, `PSO`, `CS`, `ACO`, `ABC`, and `MBO` are exact-search or heuristic baselines evaluated under the same interface.
 
 ### Experiment 1: Constraint incremental analysis
 
@@ -183,6 +249,36 @@ Prepare the following paths:
 - `--n-flights`: number of flights sampled per aircraft
 - `--time-limit`: per-algorithm time limit (seconds)
 - `--code-path`, `--benchmark-path`, `--cargo-data-path`, `--output-path`: paths for reproducibility
+
+#### Constraint levels reproduced by the code
+For **narrow-body aircraft**, the script evaluates three nested levels:
+
+- **Level 1 (Cargo Only)**: per-hold weight and CG objective.
+- **Level 2 (Cargo + Hold)**: Level 1 plus exclusive-hold constraints and ULD/cargo-type compatibility.
+- **Level 3 (Full Constraints)**: Level 2 plus loading-order constraints, continuous-loading constraints, and dangerous-goods isolation.
+
+For **wide-body aircraft**, the script uses `loose`, `medium`, and `tight` settings:
+
+- `loose`: relaxed hold weight limits and relaxed CG envelope, without exclusivity/capacity/ULD-type checks.
+- `medium`: original hold limits with capacity, exclusivity, and ULD-type checks.
+- `tight`: stricter hold limits, full hard constraints, and explicit CG envelope feasibility checks.
+
+Mathematically, the additional constraints can be written as
+
+$$
+\sum_{i \in I} x_{ih} \le 1, \qquad \forall h \in H \text{ (wide-body ULD capacity)},
+$$
+
+$$
+x_{ih} = 0, \qquad \forall (i,h)\text{ with incompatible cargo/ULD type},
+$$
+
+$$
+\sum_{i \in I} x_{ih} + \sum_{i \in I} x_{ik} \le 1,
+\qquad \forall (h,k) \in \mathcal{E},
+$$
+
+where $\mathcal{E}$ is the set of mutually exclusive hold pairs. The narrow-body full model further forbids destination mixing inside the same hold and enforces adjacency-based dangerous-goods isolation.
 
 #### Run
 **Recommended (run both A320 and B777 with defaults):**
@@ -227,6 +323,21 @@ For each aircraft, it reports the **CG gap** and **computation time** achieved b
 - `--time-limit`: per-algorithm time limit (seconds, optional)  
 - `--algos`: comma-separated algorithm names (e.g., `MILP,GA,PSO`), or `all`
 
+#### Optimization model used in this comparison
+This experiment keeps the same single-segment objective
+
+$$
+\min \; |CG - CG^\star(W)|
+$$
+
+across aircraft types and changes only the aircraft-specific input data: hold layout, hold capacity, exclusive-hold relations, allowed ULD types, and interpolated CG envelope. This design makes the reported differences attributable to aircraft configuration rather than to a change of model or evaluation metric. For exact baselines, the code constructs surrogate optimization matrices internally:
+
+- `MILP`: linear cost matrix with assignment and hold-capacity constraints.
+- `MINLP`: nonlinear surrogate with squared CG deviation.
+- `QP`: quadratic surrogate of the CG-deviation term.
+
+The heuristic baselines optimize the same problem through the common `evaluate_solution` / `get_objective_value` interface, so all methods are compared under the same feasibility checks and time budget.
+
 #### Run
 ```bash
 python "aircraft configuration comparison script" --code-root "code root" --cargo-data-dir "cargo path" --aircraft-data-dir "aircraft path" --output-dir "output path" --aircraft all --mode single --n-flights 100 --time-limit 30 --algos all
@@ -240,13 +351,13 @@ python "aircraft configuration comparison script" --code-root "code root" --carg
 
 ### Experiment 3: Variable scaling analysis (A320)
 
-This experiment studies scalability by detaching bulk cargo into progressively finer granularities (100/50/25/10 kg), which increases the number of decision variables from tens to thousands per flight. For each scale, it records computation time (and CG gap) of multiple combinatorial optimization algorithms to reveal their scaling behavior. :contentReference[oaicite:0]{index=0}
+This experiment studies scalability by detaching bulk cargo into progressively finer granularities (100/50/25/10 kg), which increases the number of decision variables from tens to thousands per flight. For each scale, it records computation time and CG gap of multiple combinatorial optimization algorithms to reveal their scaling behavior.
 
 #### What you need to prepare
 - **code root**: a directory that contains the `algorithm/` folder (the script imports `algorithm.for_narrow.*`).
-- **aircraft path**: aircraft configuration files (default: `G:\AirCa\code\aircraft_data`) and it must include `A320.csv` (the 2nd column is used as `hold_id`) plus optional CG limit files `stdZfw_a.csv/stdZfw_f.csv`. :contentReference[oaicite:2]{index=2}  
-- **cargo path**: directory containing `BAKFLGITH_LOADDATA*.csv`. :contentReference[oaicite:3]{index=3}  
-- **output path**: where result CSV files will be saved. :contentReference[oaicite:4]{index=4}  
+- **aircraft path**: aircraft configuration files (default: `G:\AirCa\code\aircraft_data`) and it must include `A320.csv` (the 2nd column is used as `hold_id`) plus optional CG limit files `stdZfw_a.csv/stdZfw_f.csv`.
+- **cargo path**: directory containing `BAKFLGITH_LOADDATA*.csv`.
+- **output path**: where result CSV files will be saved.
 
 #### Key settings
 - `--split-thresholds`: cargo detaching thresholds in kg (default: `100,50,25,10`)  
@@ -255,7 +366,42 @@ This experiment studies scalability by detaching bulk cargo into progressively f
 - `--algo-timeout`: hard timeout per algorithm run (default: `120` seconds)  
 - `--constraint-level`: `basic` or `tight` (if `tight`, CG envelope violations are also checked and reported)  
 - `--no-exclusive-check`: disable exclusive-hold violation checking (optional)  
-- `--algorithms`: optionally run a subset of algorithms by class name (comma-separated) :contentReference[oaicite:5]{index=5}
+- `--algorithms`: optionally run a subset of algorithms by class name (comma-separated)
+
+#### Modeling details for reproducibility
+After cargo splitting, each detached piece is treated as an independent item in the same narrow-body assignment model:
+
+$$
+\min \; |CG - CG^\star(W)|
+$$
+
+subject to
+
+$$
+\sum_{h \in H} x_{ih} \le 1, \qquad \forall i \in I,
+$$
+
+$$
+\sum_{i \in I} w_i x_{ih} \le \bar W_h, \qquad \forall h \in H,
+$$
+
+and, when enabled, the exclusive-hold and CG-envelope constraints. The only controlled factor changed in this experiment is the split threshold, which changes $|I|$ and therefore the number of binary assignment decisions. The released script uses the same algorithm list and the same timeout wrapper for every threshold, which makes the scaling trend directly reproducible.
+
+For the mathematical-programming baselines in `algorithm/for_narrow/exact_algorithms1.py`, the surrogate objectives implemented in code are:
+
+$$
+\texttt{MILP: } \min \sum_{i \in I}\sum_{h \in H} |1000a_h - CG^\star|\, w_i x_{ih},
+$$
+
+$$
+\texttt{MINLP: } \min \sum_{i \in I}\sum_{h \in H} (1000a_h - CG^\star)^2 w_i^2 x_{ih},
+$$
+
+$$
+\texttt{QP: } \min \frac{1}{2}x^\top Qx + c^\top x,
+$$
+
+where the diagonal entries of $Q$ and the vector $c$ are built from the same CG-deviation terms in the released code.
 
 #### Run
 ```bash
@@ -278,6 +424,15 @@ This experiment evaluates how solution quality changes under strict time budgets
 - `--n-flights`: number of top single-segment flights tested.
 - `--extra-timeout-buffer`: extra seconds added to avoid hard cutoff (recommended).
 - `--algorithms`: optionally run a subset of algorithms by class name (comma-separated); otherwise run all.
+
+#### Optimization model and stopping rule
+The optimization model is exactly the same as in Experiment 3; only the stopping budget changes. Let $T$ denote the wall-clock limit passed to each baseline. The script records the best solution returned before timeout and reports its terminal CG gap:
+
+$$
+\text{Gap}(T) = \frac{|CG(T) - CG^\star(W(T))|}{|CG^\star(W(T))|} \times 100\%.
+$$
+
+This experiment is therefore a time-to-quality benchmark rather than a different optimization model. The `--extra-timeout-buffer` argument is used only to prevent premature thread termination outside the algorithm itself and does not change the underlying objective or feasibility rules.
 
 #### Run
 ```bash
@@ -306,9 +461,56 @@ This experiment evaluates multi-stage cargo loading under two objective modes: *
   - **CG-priority**: strictly minimizes CG gap.
   - **profit-priority**: maximizes profit with CG envelope as feasibility.
 
+#### Multi-objective model used by the released code
+This experiment uses the class `CargoLoadingProblemMultiStage` in `multi_segment_cargo_loading/Multi-stage_trade-off_analysis.py`. The aircraft state is still computed from
+
+$$
+W = W_0 + \sum_{i \in I}\sum_{h \in H} w_i x_{ih},
+\qquad
+CG = CG_0 + \sum_{i \in I}\sum_{h \in H} w_i a_h x_{ih},
+$$
+
+but the objective is multi-objective. First, the script computes cargo revenue with the released piecewise tariff table:
+
+$$
+R_i = \max\{70,\; r(w_i)\, w_i\},
+$$
+
+where
+
+$$
+r(w_i)=
+\begin{cases}
+12.66, & w_i \le 44, \\
+9.74, & 45 \le w_i \le 99, \\
+9.07, & 100 \le w_i \le 299, \\
+7.16, & 300 \le w_i \le 499, \\
+6.27, & 500 \le w_i \le 999, \\
+5.44, & w_i \ge 1000.
+\end{cases}
+$$
+
+Gross revenue and profit are then
+
+$$
+R^{gross} = \sum_{i \in I}\sum_{h \in H} R_i x_{ih},
+$$
+
+$$
+R^{profit} = R^{gross}\left(1 - 0.5\left(1-e^{-\text{Gap}/50}\right)\right),
+$$
+
+where $\text{Gap}$ is the CG gap percentage. The optimization objective used in code is
+
+$$
+\min \; \alpha \cdot \frac{\text{Gap}}{100} - \beta \cdot \frac{R^{profit}}{R_{\max}},
+$$
+
+where $\alpha=\texttt{cg\_weight}$, $\beta=\texttt{revenue\_weight}$, and $R_{\max}$ is the estimated maximum achievable revenue used for normalization. The same feasibility constraints as the single-stage model remain active, and for wide-body aircraft the code additionally enforces one ULD per hold and ULD-type compatibility.
+
 #### Run
 ```bash
-python "multi-stage trade-off script" --code-root "code root" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-flights 10 --time-limit 15
+python "multi-stage trade-off script" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-flights 10 --time-limit 15
 ```
 
 
@@ -327,9 +529,25 @@ This experiment evaluates **150 multi-segment flights** using both **single-stag
 - `--n-pairs`: number of multi-segment flight instances sampled for the comparison (set to `150` for this experiment).
 - `--time-limit`: per-algorithm time limit (seconds).
 
+#### What changes between single-stage and multi-stage
+The underlying objective and feasibility checks are the same as in Experiment 5. The difference lies in how the assignment decisions are executed:
+
+- **Single-stage**: all segment cargo is optimized in one joint decision.
+- **Multi-stage**: the loading plan is optimized sequentially by stage/segment, so earlier-stage decisions constrain later-stage feasible assignments.
+
+In both cases, the reported metrics are computed from the final complete loading plan:
+
+$$
+\text{CG gap (\%)} = \frac{|CG - CG^\star(W)|}{|CG^\star(W)|}\times 100\%,
+\qquad
+\text{profit} = R^{profit}.
+$$
+
+This makes the comparison reproducible because both methods are evaluated by the same post-hoc `evaluate_solution` routine; only the decision process differs.
+
 #### Run
 ```bash
-python "single-vs-multi-stage comparison script" --code-root "code root" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-pairs 150 --time-limit 15
+python "single-vs-multi-stage comparison script" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-pairs 150 --time-limit 15
 ```
 
 ## 4.4 Running example
