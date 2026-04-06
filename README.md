@@ -28,7 +28,7 @@ Users can select from 6 preset experiments, choose an optimization algorithm, an
 
 <div align="center">
  
-![alt text](<AirCa demo-1.gif>)
+![alt text](<AirCa demo.gif>)
 
 </div>
 
