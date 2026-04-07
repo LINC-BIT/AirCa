@@ -173,11 +173,13 @@ The experimental results in Section 4 mainly report CG-related gap, and algorith
 $$
 CG = \frac{W \cdot (BA - RA)}{C} + K,
 $$
+
 where $W$ is the actual aircraft weight, $BA$ is the horizontal distance from the reference datum to the CG location, $RA$ is the reference arm, $C$ is the aircraft weight constant, and $K$ is a constant introduced to avoid negative index values.
 
 **CG gap:** The CG gap is computed as the absolute deviation normalized by the optimal value:
+
 $$
-\text{Gap}(\%) = \frac{|CG_{actual} - CG_{opt}|}{|CG_{opt}|} \times 100
+Gap = \frac{|CG_{actual} - CG_{opt}|}{|CG_{opt}|} \times 100
 $$
 
 
