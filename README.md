@@ -28,7 +28,7 @@ Users can select from 6 preset experiments, choose an optimization algorithm, an
 
 <div align="center">
  
-![alt text](<AirCa demo.gif>)
+![alt text](<AirCa demo-1.gif>)
 
 </div>
 
@@ -39,17 +39,23 @@ Click here to access AirCa demo: https://linc-bit.github.io/AirCa/html-page/inde
 
 # Tutorial index
 
+- [AirCa Demo](#airca-demo)
+- [Tutorial index](#tutorial-index)
 - [1. AirCa](#1-airca)
 - [2. Download](#2-download)
 - [3. Description](#3-description)
-  * [3.1 AirCa data field](#31-airca-data-field)
-  * [3.2 Constraints description](#32-constraints-description)
+  - [3.1 AirCa data field](#31-airca-data-field)
+  - [3.2 Constraints description](#32-constraints-description)
 - [4. Tutorials of workloads](#4-tutorials-of-workloads)
-  * [4.1 Multi-constraint cargo loading](#41-multi-constraint-cargo-loading)
-  * [4.2 Cargo loading with massive variables](#42-cargo-loading-with-massive-variables)
-  * [4.3 Multi-segment cargo loading](#43-multi-segment-cargo-loading)
+    - [Evaluation metrics](#evaluation-metrics)
+    - [Common modeling notes](#common-modeling-notes)
+  - [4.1 Constraint incremental analysis](#41-constraint-incremental-analysis)
+  - [4.2 Aircraft configuration comparison](#42-aircraft-configuration-comparison)
+  - [4.3 Variable scaling analysis](#43-variable-scaling-analysis)
+  - [4.4 Timeout behavior characterization](#44-timeout-behavior-characterization)
+  - [4.5 Multi-stage trade-off analysis](#45-multi-stage-trade-off-analysis)
+  - [4.6 Single-stage versus multi-stage comparison](#46-single-stage-versus-multi-stage-comparison)
 - [5. The AirCa APIs](#5-the-airca-apis)
-
 - [6. References](#6-references)
 
 
@@ -180,13 +186,8 @@ $$
 
 
 
-## 4.1 Multi-constraint cargo loading
-
-This workload evaluates air cargo loading algorithms under **incrementally modeling complexity sets**.  
-It supports **A320 (narrow-body, bulk hold)** and **B777 (wide-body, ULD hold)**, and reports performance across multiple constraint levels.
-
-#### Modeling and solver notes
-All experiments in this subsection use an assignment-based optimization model. Let $I$ be the set of cargo items and $H$ the set of cargo holds. The binary decision variable
+### Common modeling notes
+All workloads use an assignment-based cargo loading model. Let $I$ be the set of cargo items and $H$ be the set of cargo holds. The binary variable is
 
 $$
 x_{ih} =
@@ -204,13 +205,13 @@ W = W_0 + \sum_{i \in I}\sum_{h \in H} w_i x_{ih},
 CG = CG_0 + \sum_{i \in I}\sum_{h \in H} w_i a_h x_{ih},
 $$
 
-where $W_0$ and $CG_0$ are the aircraft initial zero-fuel quantities loaded from the aircraft profile, $w_i$ is the cargo weight, and $a_h$ is the hold CG coefficient. The CG envelope is interpolated from `stdZfw_a.csv` and `stdZfw_f.csv`, and the target CG used by the code is
+where $W_0$ and $CG_0$ are the aircraft initial zero-fuel quantities, $w_i$ is the cargo weight, and $a_h$ is the hold CG coefficient. The target CG is interpolated from the aircraft CG envelope:
 
 $$
 CG^\star(W) = CG^{aft}(W) + \frac{CG^{fwd}(W) - CG^{aft}(W)}{3}.
 $$
 
-The common single-segment objective is
+For single-segment experiments, the common objective is
 
 $$
 \min \; |CG - CG^\star(W)|.
@@ -227,336 +228,99 @@ $$
 $$
 
 $$
-CG^{aft}(W) \le CG \le CG^{fwd}(W),
+CG^{aft}(W) \le CG \le CG^{fwd}(W).
 $$
 
-plus experiment-specific operational constraints such as ULD-type compatibility, exclusive holds, continuous loading, loading order, and dangerous-goods isolation. The released baselines are implemented in `algorithm/for_narrow/` and `algorithm/for_wide/` and are executed with a unified time limit through the Python scripts below. In the codebase, `MILP`, `MINLP`, and `QP` are custom mathematical-programming-style baselines, while `DP`, `CP`, `GA`, `PSO`, `CS`, `ACO`, `ABC`, and `MBO` are exact-search or heuristic baselines evaluated under the same interface.
-
-### Experiment 1: Constraint incremental analysis
-
-#### Prerequisites
-Prepare the following paths:
-- **code root path**: a directory that contains `algorithm/` and `multi_constraint_cargo_loading/`
-- **aircraft path**: aircraft configuration files (default: `G:\AirCa\code\aircraft_data`)
-- **cargo path**: flight cargo CSV files
-- **output path**: where results will be saved
-
-> Tip: run the script from `multi_constraint_cargo_loading/` to avoid import issues.
-
-#### Key arguments
-- `--mode`: `both` (A320 + B777), `narrowbody` (A320 only), `widebody` (B777 only)
-- `--aircraft`: aircraft type list for narrow-body mode (e.g., `A320`)
-- `--n-flights`: number of flights sampled per aircraft
-- `--time-limit`: per-algorithm time limit (seconds)
-- `--code-path`, `--benchmark-path`, `--cargo-data-path`, `--output-path`: paths for reproducibility
-
-#### Constraint levels reproduced by the code
-For **narrow-body aircraft**, the script evaluates three nested levels:
-
-- **Level 1 (Cargo Only)**: per-hold weight and CG objective.
-- **Level 2 (Cargo + Hold)**: Level 1 plus exclusive-hold constraints and ULD/cargo-type compatibility.
-- **Level 3 (Full Constraints)**: Level 2 plus loading-order constraints, continuous-loading constraints, and dangerous-goods isolation.
-
-For **wide-body aircraft**, the script uses `loose`, `medium`, and `tight` settings:
-
-- `loose`: relaxed hold weight limits and relaxed CG envelope, without exclusivity/capacity/ULD-type checks.
-- `medium`: original hold limits with capacity, exclusivity, and ULD-type checks.
-- `tight`: stricter hold limits, full hard constraints, and explicit CG envelope feasibility checks.
-
-Mathematically, the additional constraints can be written as
+Wide-body ULD loading additionally uses one-ULD-per-hold capacity, ULD compatibility, and exclusive-hold constraints:
 
 $$
-\sum_{i \in I} x_{ih} \le 1, \qquad \forall h \in H \text{ (wide-body ULD capacity)},
+\sum_{i \in I} x_{ih} \le 1,\qquad
+x_{ih}=0 \ \text{for incompatible }(i,h),\qquad
+\sum_{i \in I}x_{ih}+\sum_{i \in I}x_{ik}\le 1,\ \forall(h,k)\in\mathcal{E}.
 $$
 
-$$
-x_{ih} = 0, \qquad \forall (i,h)\text{ with incompatible cargo/ULD type},
-$$
+The released baselines are implemented in `algorithm/for_narrow/` and `algorithm/for_wide/`. `MILP`, `MINLP`, and `QP` are mathematical-programming-style baselines, while `DP`, `CP`, `GA`, `PSO`, `CS`, `ACO`, `ABC`, and `MBO` are exact-search or heuristic baselines evaluated through the same `run_with_metrics()` interface.
+
+## 4.1 Constraint incremental analysis
+
+[Open demo 1](https://linc-bit.github.io/AirCa/html-page/index.html?demo=1#examples)
+
+| Item | Reproducibility details |
+|---|---|
+| Goal | Evaluate how constraint complexity affects cargo-loading solvers on A320 and B777. |
+| Setting | Script: `Constraint_incremental_analysis.py`.<br>Inputs: `--code-path`, `--benchmark-path`, `--cargo-data-path`, `--output-path`.<br>Aircraft: `A320` in narrow-body mode and `B777` in wide-body mode.<br>Algorithms: `MILP`, `MINLP`, `QP`, `DP`, `CP`, `GA`, `PSO`, `CS`, `ACO`, `ABC`, `MBO`.<br>Formula mapping: all algorithms optimize the common CG objective $\min \lvert CG-CG^\star(W)\rvert$ under progressively activated constraints. |
+| Constraint levels | Narrow-body: Level 1 = weight + CG; Level 2 = Level 1 + exclusive holds + ULD/cargo-type compatibility; Level 3 = Level 2 + loading order + continuous loading + dangerous-goods isolation.<br>Wide-body: `loose` relaxes weight/CG and disables capacity/ULD/exclusive checks; `medium` uses original limits with capacity, ULD, and exclusive checks; `tight` uses stricter weight limits and hard CG envelope feasibility. |
+| Constraints to watch | This experiment follows the paper's incremental modeling design: Complexity 1 activates cargo weight, cargo volume, and CG constraints; Complexity 2 adds ULD type, ULD cargo hold, and cargo type validity constraints; Complexity 3 further adds front/rear compartment, special constraints, ULD correspond constraints, dangerous-cargo isolation, joint weight, continuous loading, and loading order constraints. |
+| Test steps | Run from `multi_constraint_cargo_loading/` when possible.<br>`python Constraint_incremental_analysis.py --mode both`<br>`python Constraint_incremental_analysis.py --mode narrowbody --aircraft A320 --n-flights 10`<br>`python Constraint_incremental_analysis.py --mode widebody --n-flights 50`<br>Full template: `python Constraint_incremental_analysis.py --code-path "code root" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --mode both --n-flights 10 --time-limit 30` |
+| Results | The paper reports that heuristic search algorithms keep near-zero CG gaps across the three complexity levels, while mathematical programming is more sensitive to newly activated constraints and shows larger CG gaps. Figure indicates that adding practical constraints changes the feasible space and can improve solution fidelity for mathematical-programming baselines, but heuristic search typically spends about twice the computation time because it explores the original feasible space more directly. ![alt text](image.png) |
+
+## 4.2 Aircraft configuration comparison
+
+[Open demo 2](https://linc-bit.github.io/AirCa/html-page/index.html?demo=2#examples)
+
+| Item | Reproducibility details |
+|---|---|
+| Goal | Compare how aircraft configuration changes optimization difficulty under the same single-segment loading objective. |
+| Setting | Script: `Aircraft_configuration_comparison..py`.<br>Inputs: `--code-root`, `--cargo-data-dir`, `--aircraft-data-dir`, `--output-dir`.<br>Aircraft: `A320`, `B777`, and `C919` via `--aircraft all` or a single aircraft name.<br>Mode: `--mode single` for batch evaluation; `--mode demo` for one flight visualization.<br>Formula mapping: keeps $\min \lvert CG-CG^\star(W)\rvert$ fixed while changing aircraft hold layout, capacities, CG coefficients, exclusive-hold relations, ULD compatibility, and envelope files. |
+| Solver setup | Use `--algos all` to run all available baselines, or pass a comma-separated subset such as `MILP,GA,PSO`.<br>`MILP` uses a linear CG-cost matrix, `MINLP` uses a squared CG-deviation surrogate, and `QP` uses a quadratic CG surrogate; heuristic baselines use the same `evaluate_solution()` feasibility checks. |
+| Constraints to watch | This comparison isolates aircraft-structure effects. A320 is the narrow-body baseline with 16 holds, B777 is a wide-body aircraft with many ULD positions and a one-ULD-per-hold requirement, and C919 is a narrow-body aircraft with 18 holds and a different CG envelope. Use the same constraint level across aircraft so the differences come from hold count, spatial layout, and CG envelope rather than from a different model. |
+| Test steps | `python "aircraft configuration comparison script" --code-root "code root" --cargo-data-dir "cargo path" --aircraft-data-dir "aircraft path" --output-dir "output path" --aircraft all --mode single --n-flights 100 --time-limit 30 --algos all` |
+| Results | The table shows strong cross-aircraft differences. Mathematical-programming gaps vary substantially across aircraft, for example A320 has large gaps for MILP/MINLP/QP/DP/CP, B777 has smaller mathematical-programming gaps due to more flexible wide-body hold layout, and C919 again shows large gaps for several mathematical-programming baselines. Heuristic search generalizes better: GA and ABC reach `0.00±0.00%` on A320 and C919, while B777 heuristic gaps are mostly near zero. Timing shows mathematical-programming methods such as DP/CP/QP can finish very quickly, whereas heuristics usually spend tens of seconds.![alt text](image-1.png)|
+
+## 4.3 Variable scaling analysis
+
+[Open demo 3](https://linc-bit.github.io/AirCa/html-page/index.html?demo=3#examples)
+
+| Item | Reproducibility details |
+|---|---|
+| Goal | Test scalability when A320 bulk cargo is detached into progressively finer pieces, increasing the number of assignment variables. |
+| Setting | Script: `Variable_scaling_analysis.py`.<br>Inputs: `--code-root`, `--aircraft-data-dir`, `--cargo-data-dir`, `--output-dir`.<br>Aircraft: A320 only.<br>Split thresholds: `--split-thresholds 100,50,25,10` kg.<br>Formula mapping: each detached piece becomes a new item $i \in I$, so the binary decision count increases from $\lvert I\rvert\lvert H\rvert$ to $\lvert I'\rvert\lvert H\rvert$ while the objective remains $\min \lvert CG-CG^\star(W)\rvert$. |
+| Solver setup | Algorithms are imported from `algorithm.for_narrow.*` in the stable order `MILP`, `MINLP`, `QP`, `DP`, `CP`, `GA`, `PSO`, `CS`, `ACO`, `ABC`, `MBO`.<br>`--time-limit` is passed into each solver; `--algo-timeout` is the external hard timeout.<br>`--constraint-level basic` checks weight, ULD/cargo compatibility, and exclusive holds; `tight` additionally reports CG envelope violations. |
+| Constraints to watch | Cargo detaching is meaningful mainly for narrow-body bulk-cargo scenarios. The important control variable is the detaching threshold: lower thresholds create more sub-cargoes, more assignment variables, and more candidate loading combinations, while the same weight, CG, and hold feasibility checks still apply. |
+| Test steps | `python "code_root/AirCa/code/cargo_loading_with_massive_variables/Variable_scaling_analysis.py" --code-root "code root" --aircraft-data-dir "aircraft path" --cargo-data-dir "cargo path" --output-dir "output path" --n-flights 4 --time-limit 120 --algo-timeout 120 --split-thresholds 100,50,25,10 --constraint-level basic` |
+| Results | The variable-scaling analysis detaches cargo at 100 kg, 50 kg, 25 kg, and 10 kg thresholds, expanding the problem from tens of variables to more than 2000 variables per flight. Figure 5(b) and Appendix D report that most mathematical-programming baselines keep solve time under 1 second except MILP/MINLP, while MINLP increases moderately and heuristic algorithms remain around 25-33 seconds because their fixed iteration budgets bound exploration. The result supports Q2: larger search spaces especially affect heuristic search, MILP, and MINLP.![alt text](image-3.png) |
+
+## 4.4 Timeout behavior characterization
+
+[Open demo 4](https://linc-bit.github.io/AirCa/html-page/index.html?demo=4#examples)
+
+| Item | Reproducibility details |
+|---|---|
+| Goal | Characterize solution quality under strict runtime budgets. |
+| Setting | Script: `Timeout_behavior_characterization.py`.<br>Inputs: `--code-root`, `--aircraft-data-dir`, `--cargo-data-dir`, `--output-dir`.<br>Aircraft: A320 only.<br>Fixed variable scale: `--split-threshold 50` kg by default.<br>Formula mapping: same model as Section 4.3; only the runtime budget $T$ changes, and the terminal quality is $\text{Gap}(T)=\frac{\lvert CG(T)-CG^\star(W(T))\rvert}{\lvert CG^\star(W(T))\rvert}\times 100\%$. |
+| Solver setup | Sweep `--time-limits 10,30,60,120` to compare early stopping behavior.<br>`--extra-timeout-buffer 30` only protects the outer wrapper from cutting off the solver too early; it does not change the objective or constraints.<br>`--algorithms` can restrict evaluation to a comma-separated subset. |
+| Constraints to watch | Keep the detaching threshold fixed so the only changing factor is the time budget. This makes the experiment a convergence-profile test rather than a new optimization model. The paper uses this design to distinguish rapid convergence from anytime refinement. |
+| Test steps | `python "code_root/AirCa/code/cargo_loading_with_massive_variables/Timeout_behavior_characterization.py" --code-root "code root" --aircraft-data-dir "aircraft path" --cargo-data-dir "cargo path" --output-dir "output path" --n-flights 4 --split-threshold 50 --time-limits 10,30,60,120 --extra-timeout-buffer 30` |
+| Results | For mathematical-programming baselines, The CG gap around 30-42% remain nearly unchanged as time limits increase from 10 seconds to 120 seconds, indicating immediate convergence to relaxed or suboptimal solutions. Heuristic algorithms show anytime behavior: they start with gaps around 1-4% at 10 seconds and improve to below 1% by 30 seconds, with GA, ABC, and MBO approaching near-zero gaps. |
+
+## 4.5 Multi-stage trade-off analysis
+
+[Open demo 5](https://linc-bit.github.io/AirCa/html-page/index.html?demo=5#examples)
+
+| Item | Reproducibility details |
+|---|---|
+| Goal | Evaluate the trade-off between CG-priority loading and profit-priority loading on multi-segment A320 and B777 flights. |
+| Setting | Script: `Multi-stage_trade-off_analysis.py`.<br>Inputs: `--benchmark-path`, `--cargo-data-path`, `--output-path`.<br>Aircraft: `--aircraft A320 B777`.<br>Objective modes: CG-priority uses `cg_weight=1.0`, `revenue_weight=0.0`; profit-priority uses `cg_weight=0.0`, `revenue_weight=1.0`.<br>Formula mapping: optimize $\alpha\cdot \frac{\text{Gap}}{100}-\beta\cdot\frac{R^{profit}}{R_{\max}}$. |
+| Revenue and profit | Cargo revenue is computed by the piecewise tariff $R_i=\max\{70,r(w_i)w_i\}$, where $r(w_i)$ follows the weight tiers in the code.<br>Gross revenue is $R^{gross}=\sum_i\sum_h R_i x_{ih}$.<br>Profit is penalized by CG deviation: $R^{profit}=R^{gross}(1-0.5(1-e^{-\text{Gap}/50}))$. |
+| Solver setup | The runner loads narrow-body and wide-body algorithms from different modules and applies the same `run_with_metrics()` collection logic.<br>Wide-body flights additionally enforce one ULD per hold, ULD compatibility, weight limits, and exclusive holds. |
+| Constraints to watch | Both objective modes enforce the same multi-stage sequential constraints: long-haul cargo is loaded first into inner holds and short-haul cargo must remain unloadable in later stages. The key experimental variable is therefore the objective priority, not the constraint set. |
+| Test steps | `python "multi-stage trade-off script" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-flights 10 --time-limit 15` |
+| Results | Figure shows a CG-profit trade-off. Under CG-priority, heuristic search achieves low gaps below about 2.5% across A320 and B777, while mathematical-programming baselines have much larger gaps, especially on A320. Under profit-priority, profit increases because the solver selects more profitable cargo, but CG gap can rise because the two objectives compete for the same hold resources and loading-order constraints. The paper reports that profit-priority improves profit by roughly 10% on average while mathematical-programming methods show about 20% higher CG-gap deviation than heuristic search under different priority settings. ![alt text](image-4.png) |
+
+## 4.6 Single-stage versus multi-stage comparison
+
+[Open demo 6](https://linc-bit.github.io/AirCa/html-page/index.html?demo=6#examples)
+
+| Item | Reproducibility details |
+|---|---|
+| Goal | Compare single-stage and multi-stage optimization on multi-segment A320 and B777 flights. |
+| Setting | Script: `Single-stage_versus_multi-stage_comparison.py`.<br>Inputs: `--benchmark-path`, `--cargo-data-path`, `--output-path`.<br>Aircraft: `--aircraft A320 B777`.<br>Sampling: `--n-pairs 150` for the full comparison.<br>Formula mapping: both strategies use the same final evaluation, $\text{CG gap (\%)}=\frac{\lvert CG-CG^\star(W)\rvert}{\lvert CG^\star(W)\rvert}\times 100\%$ and $\text{profit}=R^{profit}$. |
+| Stage definitions | Single-stage: optimize all segment cargo in one joint assignment.<br>Multi-stage: optimize sequentially by segment/stage, so earlier assignments restrict later feasible decisions. |
+| Solver setup | The script loads narrow-body and wide-body baselines from the corresponding algorithm modules and runs them under the same `--time-limit`.<br>Single-stage uses CG-priority weights; multi-stage uses profit-priority weights for multi-segment loading. |
+| Constraints to watch | The matched-pair design controls cargo volume while isolating the effect of sequential loading. Single-segment flights prioritize CG balance, while multi-segment flights prioritize payload/profit across intermediate destinations. Multi-stage runs must repeatedly check loading order, joint weight, CG, and hold feasibility after each stage. |
+| Test steps | `python "single-vs-multi-stage comparison script" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-pairs 150 --time-limit 15` |
+| Results | Table shows that multi-stage optimization increases profit substantially while adding only a small CG-gap penalty. On B777, multi-stage optimization increases transportation profit by up to 6.3x, with only about 2.7% average CG-gap loss compared with single-stage optimization, but it also requires roughly twice the computation time. Appendix D further reports that multi-stage optimization improves profits by 10-40% while extending computation time by about 2-3x; heuristic algorithms keep gaps below about 0.15% with profits around $61-80k, whereas mathematical-programming methods have larger gaps. ![alt text](image-5.png)|
 
-$$
-\sum_{i \in I} x_{ih} + \sum_{i \in I} x_{ik} \le 1,
-\qquad \forall (h,k) \in \mathcal{E},
-$$
-
-where $\mathcal{E}$ is the set of mutually exclusive hold pairs. The narrow-body full model further forbids destination mixing inside the same hold and enforces adjacency-based dangerous-goods isolation.
-
-#### Run
-**Recommended (run both A320 and B777 with defaults):**
-```bash
-cd <code root path>\multi_constraint_cargo_loading
-python Constraint_incremental_analysis.py --mode both
-
-# A320 only
-python Constraint_incremental_analysis.py --mode narrowbody --aircraft A320 --n-flights 10
-
-# B777 only
-python Constraint_incremental_analysis.py --mode widebody --n-flights 50
-
-# Full template
-python Constraint_incremental_analysis.py ^
-  --code-path <code root path> ^
-  --benchmark-path <aircraft path> ^
-  --cargo-data-path <cargo path> ^
-  --output-path <output path> ^
-  --mode both ^
-  --n-flights 10 ^
-  --time-limit 30
-```
-
-
-
-### Experiment 2: Aircraft configuration comparison (A320 / B777 / C919)
-
-This experiment compares three representative aircraft types—**A320**, **B777**, and **C919**—under the same algorithm set.  
-For each aircraft, it reports the **CG gap** and **computation time** achieved by each algorithm, highlighting how aircraft configurations affect optimization difficulty.
-
-#### What you need to prepare
-- **code root**: the project root that contains the `algorithm/` package
-- **cargo path**: a folder containing `BAKFLGITH_LOADDATA*.csv`
-- **aircraft path**: aircraft configuration data folder (contains subfolders like `A320/`, `B777/`, `C919/`)
-- **output path**: where results will be saved
-
-#### Key settings
-- `--aircraft all`: run A320 + B777 + C919 in one run  
-- `--mode single`: batch evaluation on *single-segment* flights  
-- `--n-flights`: number of flights sampled per aircraft  
-- `--time-limit`: per-algorithm time limit (seconds, optional)  
-- `--algos`: comma-separated algorithm names (e.g., `MILP,GA,PSO`), or `all`
-
-#### Optimization model used in this comparison
-This experiment keeps the same single-segment objective
-
-$$
-\min \; |CG - CG^\star(W)|
-$$
-
-across aircraft types and changes only the aircraft-specific input data: hold layout, hold capacity, exclusive-hold relations, allowed ULD types, and interpolated CG envelope. This design makes the reported differences attributable to aircraft configuration rather than to a change of model or evaluation metric. For exact baselines, the code constructs surrogate optimization matrices internally:
-
-- `MILP`: linear cost matrix with assignment and hold-capacity constraints.
-- `MINLP`: nonlinear surrogate with squared CG deviation.
-- `QP`: quadratic surrogate of the CG-deviation term.
-
-The heuristic baselines optimize the same problem through the common `evaluate_solution` / `get_objective_value` interface, so all methods are compared under the same feasibility checks and time budget.
-
-#### Run
-```bash
-python "aircraft configuration comparison script" --code-root "code root" --cargo-data-dir "cargo path" --aircraft-data-dir "aircraft path" --output-dir "output path" --aircraft all --mode single --n-flights 100 --time-limit 30 --algos all
-```
-
-
-
-
-## 4.2 Cargo loading with massive variables
-
-
-### Experiment 3: Variable scaling analysis (A320)
-
-This experiment studies scalability by detaching bulk cargo into progressively finer granularities (100/50/25/10 kg), which increases the number of decision variables from tens to thousands per flight. For each scale, it records computation time and CG gap of multiple combinatorial optimization algorithms to reveal their scaling behavior.
-
-#### What you need to prepare
-- **code root**: a directory that contains the `algorithm/` folder (the script imports `algorithm.for_narrow.*`).
-- **aircraft path**: aircraft configuration files (default: `G:\AirCa\code\aircraft_data`) and it must include `A320.csv` (the 2nd column is used as `hold_id`) plus optional CG limit files `stdZfw_a.csv/stdZfw_f.csv`.
-- **cargo path**: directory containing `BAKFLGITH_LOADDATA*.csv`.
-- **output path**: where result CSV files will be saved.
-
-#### Key settings
-- `--split-thresholds`: cargo detaching thresholds in kg (default: `100,50,25,10`)  
-- `--n-flights`: number of top single-segment flights tested (default: `4`)  
-- `--time-limit`: time limit passed to each algorithm (default: `120` seconds)  
-- `--algo-timeout`: hard timeout per algorithm run (default: `120` seconds)  
-- `--constraint-level`: `basic` or `tight` (if `tight`, CG envelope violations are also checked and reported)  
-- `--no-exclusive-check`: disable exclusive-hold violation checking (optional)  
-- `--algorithms`: optionally run a subset of algorithms by class name (comma-separated)
-
-#### Modeling details for reproducibility
-After cargo splitting, each detached piece is treated as an independent item in the same narrow-body assignment model:
-
-$$
-\min \; |CG - CG^\star(W)|
-$$
-
-subject to
-
-$$
-\sum_{h \in H} x_{ih} \le 1, \qquad \forall i \in I,
-$$
-
-$$
-\sum_{i \in I} w_i x_{ih} \le \bar W_h, \qquad \forall h \in H,
-$$
-
-and, when enabled, the exclusive-hold and CG-envelope constraints. The only controlled factor changed in this experiment is the split threshold, which changes $|I|$ and therefore the number of binary assignment decisions. The released script uses the same algorithm list and the same timeout wrapper for every threshold, which makes the scaling trend directly reproducible.
-
-For the mathematical-programming baselines in `algorithm/for_narrow/exact_algorithms1.py`, the surrogate objectives implemented in code are:
-
-$$
-\texttt{MILP: } \min \sum_{i \in I}\sum_{h \in H} |1000a_h - CG^\star|\, w_i x_{ih},
-$$
-
-$$
-\texttt{MINLP: } \min \sum_{i \in I}\sum_{h \in H} (1000a_h - CG^\star)^2 w_i^2 x_{ih},
-$$
-
-$$
-\texttt{QP: } \min \frac{1}{2}x^\top Qx + c^\top x,
-$$
-
-where the diagonal entries of $Q$ and the vector $c$ are built from the same CG-deviation terms in the released code.
-
-#### Run
-```bash
-python "code_root/AirCa/code/cargo_loading_with_massive_variables/Variable_scaling_analysis.py" --code-root "code root" --aircraft-data-dir "aircraft path" --cargo-data-dir "cargo path" --output-dir "output path" --n-flights 4 --time-limit 120 --algo-timeout 120 --split-thresholds 100,50,25,10 --constraint-level basic
-```
-
-### Experiment 4: Timeout behavior characterization (A320)
-
-This experiment evaluates how solution quality changes under strict time budgets by imposing time limits of **10s, 30s, 60s, and 120s**. It measures the **CG gap at termination** for each algorithm, distinguishing methods that converge quickly from those that need longer computation.
-
-#### What you need to prepare
-- **code root**: a directory that contains the `algorithm/` folder (the script imports `algorithm.for_narrow.*`).
-- **aircraft path**: aircraft configuration files (must include `A320.csv`; the 2nd column is used as `hold_id`, and optional CG limit files may be used).
-- **cargo path**: directory containing `BAKFLGITH_LOADDATA*.csv`.
-- **output path**: where result CSV files will be saved.
-
-#### Key settings
-- `--time-limits`: time limits (seconds) swept in this experiment (use `10,30,60,120`).
-- `--split-threshold`: cargo detaching threshold in kg used to fix the variable scale (e.g., `50`).
-- `--n-flights`: number of top single-segment flights tested.
-- `--extra-timeout-buffer`: extra seconds added to avoid hard cutoff (recommended).
-- `--algorithms`: optionally run a subset of algorithms by class name (comma-separated); otherwise run all.
-
-#### Optimization model and stopping rule
-The optimization model is exactly the same as in Experiment 3; only the stopping budget changes. Let $T$ denote the wall-clock limit passed to each baseline. The script records the best solution returned before timeout and reports its terminal CG gap:
-
-$$
-\text{Gap}(T) = \frac{|CG(T) - CG^\star(W(T))|}{|CG^\star(W(T))|} \times 100\%.
-$$
-
-This experiment is therefore a time-to-quality benchmark rather than a different optimization model. The `--extra-timeout-buffer` argument is used only to prevent premature thread termination outside the algorithm itself and does not change the underlying objective or feasibility rules.
-
-#### Run
-```bash
-python "code_root/AirCa/code/cargo_loading_with_massive_variables/Timeout_behavior_characterization.py" --code-root "code root" --aircraft-data-dir "aircraft path" --cargo-data-dir "cargo path" --output-dir "output path" --n-flights 4 --split-threshold 50 --time-limits 10,30,60,120 --extra-timeout-buffer 30
-```
-
-
-## 4.3 Multi-segment cargo loading
-
-
-### Experiment 5: Multi-stage trade-off analysis (A320 & B777)
-
-This experiment evaluates multi-stage cargo loading under two objective modes: **CG-priority** (minimize CG deviation) and **profit-priority** (maximize transportation profit while satisfying CG envelope feasibility). Both modes use the same multi-stage sequential constraint (long-haul cargo is loaded first into inner holds), and we report the achieved **CG gap** and **profit** on **A320** and **B777**.
-
-#### What you need to prepare
-- **code root**: a directory that contains the `algorithm/` folder (the script loads narrow-body and wide-body algorithms from different modules).
-- **aircraft path**: aircraft configuration data (must include subfolders/files for `A320` and `B777`).
-- **cargo path**: directory containing `BAKFLGITH_LOADDATA*.csv`.
-- **output path**: where result CSV files will be saved.
-
-#### Key settings
-- `--aircraft A320 B777`: run both aircraft types (recommended).
-- `--n-flights`: number of flights sampled per aircraft.
-- `--time-limit`: per-algorithm time limit (seconds).
-- Objective modes are evaluated automatically:
-  - **CG-priority**: strictly minimizes CG gap.
-  - **profit-priority**: maximizes profit with CG envelope as feasibility.
-
-#### Multi-objective model used by the released code
-This experiment uses the class `CargoLoadingProblemMultiStage` in `multi_segment_cargo_loading/Multi-stage_trade-off_analysis.py`. The aircraft state is still computed from
-
-$$
-W = W_0 + \sum_{i \in I}\sum_{h \in H} w_i x_{ih},
-\qquad
-CG = CG_0 + \sum_{i \in I}\sum_{h \in H} w_i a_h x_{ih},
-$$
-
-but the objective is multi-objective. First, the script computes cargo revenue with the released piecewise tariff table:
-
-$$
-R_i = \max\{70,\; r(w_i)\, w_i\},
-$$
-
-where
-
-$$
-r(w_i)=
-\begin{cases}
-12.66, & w_i \le 44, \\
-9.74, & 45 \le w_i \le 99, \\
-9.07, & 100 \le w_i \le 299, \\
-7.16, & 300 \le w_i \le 499, \\
-6.27, & 500 \le w_i \le 999, \\
-5.44, & w_i \ge 1000.
-\end{cases}
-$$
-
-Gross revenue and profit are then
-
-$$
-R^{gross} = \sum_{i \in I}\sum_{h \in H} R_i x_{ih},
-$$
-
-$$
-R^{profit} = R^{gross}\left(1 - 0.5\left(1-e^{-\text{Gap}/50}\right)\right),
-$$
-
-where $\text{Gap}$ is the CG gap percentage. The optimization objective used in code is
-
-$$
-\min \; \alpha \cdot \frac{\text{Gap}}{100} - \beta \cdot \frac{R^{profit}}{R_{\max}},
-$$
-
-where $\alpha=\texttt{cg\_weight}$, $\beta=\texttt{revenue\_weight}$, and $R_{\max}$ is the estimated maximum achievable revenue used for normalization. The same feasibility constraints as the single-stage model remain active, and for wide-body aircraft the code additionally enforces one ULD per hold and ULD-type compatibility.
-
-#### Run
-```bash
-python "multi-stage trade-off script" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-flights 10 --time-limit 15
-```
-
-
-### Experiment 6: Single-stage versus multi-stage comparison (A320 & B777)
-
-This experiment evaluates **150 multi-segment flights** using both **single-stage** and **multi-stage** optimization. It compares **CG gap**, **transportation profit**, and **computation time** on these multi-segment instances to quantify the benefits of multi-stage optimization.
-
-#### What you need to prepare
-- **code root**: a directory that contains the `algorithm/` folder (narrow-body and wide-body algorithms are loaded from different modules).
-- **aircraft path**: aircraft configuration data (must include `A320` and `B777` configurations).
-- **cargo path**: directory containing `BAKFLGITH_LOADDATA*.csv`.
-- **output path**: where result CSV files will be saved.
-
-#### Key settings
-- `--aircraft A320 B777`: run both aircraft types (recommended).
-- `--n-pairs`: number of multi-segment flight instances sampled for the comparison (set to `150` for this experiment).
-- `--time-limit`: per-algorithm time limit (seconds).
-
-#### What changes between single-stage and multi-stage
-The underlying objective and feasibility checks are the same as in Experiment 5. The difference lies in how the assignment decisions are executed:
-
-- **Single-stage**: all segment cargo is optimized in one joint decision.
-- **Multi-stage**: the loading plan is optimized sequentially by stage/segment, so earlier-stage decisions constrain later-stage feasible assignments.
-
-In both cases, the reported metrics are computed from the final complete loading plan:
-
-$$
-\text{CG gap (\%)} = \frac{|CG - CG^\star(W)|}{|CG^\star(W)|}\times 100\%,
-\qquad
-\text{profit} = R^{profit}.
-$$
-
-This makes the comparison reproducible because both methods are evaluated by the same post-hoc `evaluate_solution` routine; only the decision process differs.
-
-#### Run
-```bash
-python "single-vs-multi-stage comparison script" --benchmark-path "aircraft path" --cargo-data-path "cargo path" --output-path "output path" --aircraft A320 B777 --n-pairs 150 --time-limit 15
-```
-
-## 4.4 Running example
-```
-python "<code root path>/AirCa/code/multi_constraint_cargo_loading/Aircraft_configuration_comparison..py" --code-root "code root" --cargo-data-dir "cargo path" --aircraft-data-dir "aircraft path" --output-dir "output path" --aircraft B777 --mode demo --flight-number "flight number" --algos all --time-limit 120
-
-```
-
-![alt text](image-2.png)
 
 
 # 5. The AirCa APIs
